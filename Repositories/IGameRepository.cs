@@ -13,6 +13,6 @@ namespace SnakesAndLadderEvyatar.Repositories
         public int GetBoardRowsCount();
         public int GetBoardColumnsCount();
         public bool GetCellModifier(Cell cell, out CellModifier cellModifier);
-        public void SetBestPlayer(Player player);
+        public void ReportPlayerScore(Player player);
     }
 }

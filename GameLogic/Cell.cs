@@ -35,7 +35,6 @@ namespace SnakesAndLadderEvyatar.GameLogic
         {
             return HashCode.Combine(Column, Row);
         }
-
         public int CompareTo(Cell other)
         {
             int result = this.Row.CompareTo(other.Row);
@@ -46,6 +45,5 @@ namespace SnakesAndLadderEvyatar.GameLogic
 
             return result;
         }
-
     }
 }

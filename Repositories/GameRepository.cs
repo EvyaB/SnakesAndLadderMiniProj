@@ -39,9 +39,9 @@ namespace SnakesAndLadderEvyatar.Repositories
             return _gameBoard.BoardSize.Item2;
         }
 
-        public void SetBestPlayer(Player player)
+        public void ReportPlayerScore(Player player)
         {
-            _scoreboard.BestPlayer = player;
+            _scoreboard.AddPlayerScore(player);
         }
 
         public bool GetCellModifier(Cell cell, out CellModifier cellModifier)

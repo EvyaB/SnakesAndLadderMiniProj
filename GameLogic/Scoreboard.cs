@@ -13,5 +13,14 @@ namespace SnakesAndLadderEvyatar.GameLogic
         {
             BestPlayer = new Player() { PlayerName = "None", TurnNumber = int.MaxValue, PlayerGameState = Player.GameState.Unrecognized, CurrentCell = new Tuple<int, int>(0, 0) };
         }
+
+        public void AddPlayerScore(Player player)
+        {
+            // Only saving the best player right, so just check if the new player has beaten the previous best score
+            if (player.TurnNumber < BestPlayer.TurnNumber)
+            {
+                BestPlayer = player;
+            }
+        }
     }
 }

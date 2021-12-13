@@ -34,7 +34,7 @@ namespace SnakesAndLadderEvyatar.Repositories
             return newPlayer;
         }
 
-        public Tuple<Player, bool> Get(string name)
+        public Tuple<Player, bool> GetPlayer(string name)
         {
             Tuple<Player, bool> result;
             Player playerData;
@@ -53,7 +53,7 @@ namespace SnakesAndLadderEvyatar.Repositories
             return result;
         }
 
-        public IEnumerable<Player> Get()
+        public IEnumerable<Player> GetAllPlayers()
         {
             return _players.Values;
         }

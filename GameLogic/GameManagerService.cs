@@ -29,7 +29,7 @@ namespace SnakesAndLadderEvyatar.GameLogic
             while (!stoppingToken.IsCancellationRequested)
             {
                 // Go over every 'ingame' (actively playing) player and run his/her turn
-                foreach (Player currentPlayer in _playerRepository.Get().Where(player => player.PlayerGameState == Player.GameState.Ingame))
+                foreach (Player currentPlayer in _playerRepository.GetAllPlayers().Where(player => player.PlayerGameState == Player.GameState.Ingame))
                 {
                     PlayPlayerTurn(currentPlayer);
                 }
@@ -49,29 +49,19 @@ namespace SnakesAndLadderEvyatar.GameLogic
             if (player.CurrentCell == _gameRepository.GetFinalCell())
             {
                 player.PlayerGameState = Player.GameState.Finished;
-                
-                // Check if the player is the new best player
-                if (player.TurnNumber < _gameRepository.GetBestPlayer().TurnNumber)
-                {
-                    _gameRepository.SetBestPlayer(player);
-                }
+                _gameRepository.ReportPlayerScore(player);
             }
         }
 
         // Move player according to dice roll, snakes/ladders modiferes and the boundaries of the board
         private void MovePlayer(Player player)
         {
-            MovePlayerAccordingToDiceRoll(player);
-            MovePlayerAccordingToCellEffect(player);
-
-            // Check if we 'went pass' the final cell (went to the row above the final cell), if so clamp back to it
-            if (player.CurrentCell.Row > _gameRepository.GetBoardRowsCount())
-            {
-                player.CurrentCell = _gameRepository.GetFinalCell();
-            }
+            MovePlayerPerDiceRoll(player);
+            MovePlayerPerCellEffect(player);
+            ClampToBoardCorners(player);
         }
 
-        private void MovePlayerAccordingToDiceRoll(Player player)
+        private void MovePlayerPerDiceRoll(Player player)
         {
             // Roll a dice 
             Random random = new Random();
@@ -110,7 +100,7 @@ namespace SnakesAndLadderEvyatar.GameLogic
             }
         }
 
-        private void MovePlayerAccordingToCellEffect(Player player)
+        private void MovePlayerPerCellEffect(Player player)
         {
             // Check if there is any modifier at player location
             CellModifier cellModifier;
@@ -122,5 +112,18 @@ namespace SnakesAndLadderEvyatar.GameLogic
                 player.CurrentCell = cellModifier.TargetCell; 
             }
         }
+        private void ClampToBoardCorners(Player player)
+        {
+            // Check if we somehow went back from the minimium cell position (shouldn't happen!)
+            if (player.CurrentCell.Row < 0) { player.CurrentCell.Row = 0; }
+            if (player.CurrentCell.Column < 0) { player.CurrentCell.Column = 0; }
+
+            // Check if we 'went pass' the final cell (went to the row above the final cell), if so clamp back to it
+            if (player.CurrentCell.Row > _gameRepository.GetBoardRowsCount())
+            {
+                player.CurrentCell = _gameRepository.GetFinalCell();
+            }
+        }
+
     }
 }

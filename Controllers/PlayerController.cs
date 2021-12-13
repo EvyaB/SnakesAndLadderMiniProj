@@ -22,7 +22,7 @@ namespace SnakesAndLadderEvyatar.Controllers
         [HttpGet("{name}")]
         public IActionResult GetPlayerStatus(string name)
         {
-            Tuple<GameLogic.Player, bool> player = _playerRepository.Get(name);
+            Tuple<GameLogic.Player, bool> player = _playerRepository.GetPlayer(name);
             
             // Check if the player was found
             if (player.Item1.PlayerGameState == GameLogic.Player.GameState.Unrecognized)
@@ -46,7 +46,7 @@ namespace SnakesAndLadderEvyatar.Controllers
         [HttpGet("all")]
         public IEnumerable<GameLogic.Player> GetPlayerStatus()
         {
-            return _playerRepository.Get();
+            return _playerRepository.GetAllPlayers();
         }
        
         // Assistant method to check for the best player (taken least turns to finish the game)
