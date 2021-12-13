@@ -25,12 +25,10 @@ namespace SnakesAndLadderEvyatar.GameLogic
             CellModifiers.Add(new LadderCell(new Cell(2, 1), new Cell(3, 2)));
             CellModifiers.Add(new LadderCell(new Cell(3, 6), new Cell(4, 4)));
             CellModifiers.Add(new LadderCell(new Cell(2, 5), new Cell(3, 5)));
-            CellModifiers.Add(new SnakeCell(new Cell(6, 3), new Cell(4, 6)));
+            CellModifiers.Add(new SnakeCell(new Cell(6, 3), new Cell(4, 1)));
             CellModifiers.Add(new SnakeCell(new Cell(1, 2), new Cell(0, 5)));
             CellModifiers.Add(new SnakeCell(new Cell(4, 6), new Cell(3, 2)));
             CellModifiers.Add(new SnakeCell(new Cell(5, 5), new Cell(3, 0)));
-
-            CellModifiers.Sort();
         }
 
         public CellModifier GetCellModifier(Cell cell)
