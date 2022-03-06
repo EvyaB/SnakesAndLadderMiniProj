@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using SnakesAndLadderEvyatar.Data;
 
 namespace SnakesAndLadderEvyatar.GameLogic
 {
@@ -29,7 +30,7 @@ namespace SnakesAndLadderEvyatar.GameLogic
             while (!stoppingToken.IsCancellationRequested)
             {
                 // Go over every 'ingame' (actively playing) player and run his/her turn
-                foreach (Player currentPlayer in _playerRepository.GetAllPlayers().Where(player => player.PlayerGameState == Player.GameState.Ingame))
+                foreach (Player currentPlayer in _playerRepository.GetAllPlayers().Where(player => player.PlayerGameState == Player.GameState.Playing))
                 {
                     PlayPlayerTurn(currentPlayer);
                 }

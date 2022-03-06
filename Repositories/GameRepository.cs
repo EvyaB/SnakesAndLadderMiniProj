@@ -3,13 +3,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using SnakesAndLadderEvyatar.Data;
 
 namespace SnakesAndLadderEvyatar.Repositories
 {
     public class GameRepository : IGameRepository
     {
-        private GameLogic.GameBoard _gameBoard;
-        private GameLogic.Scoreboard _scoreboard;
+        private GameBoard _gameBoard;
+        private Scoreboard _scoreboard;
 
         public GameRepository()
         {

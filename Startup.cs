@@ -40,6 +40,7 @@ namespace SnakesAndLadderEvyatar
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
+                c.EnableTryItOutByDefault();
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "EvyaB Snakes&Ladders");
             });
 

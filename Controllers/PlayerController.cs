@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using SnakesAndLadderEvyatar.Data;
 
 namespace SnakesAndLadderEvyatar.Controllers
 {
@@ -22,10 +23,10 @@ namespace SnakesAndLadderEvyatar.Controllers
         [HttpGet("{name}")]
         public IActionResult GetPlayerStatus(string name)
         {
-            Tuple<GameLogic.Player, bool> player = _playerRepository.GetPlayer(name);
+            Tuple<Player, bool> player = _playerRepository.GetPlayer(name);
             
             // Check if the player was found
-            if (player.Item1.PlayerGameState == GameLogic.Player.GameState.Unrecognized)
+            if (player.Item1.PlayerGameState == Player.GameState.Unrecognized)
             {
                 return NotFound();
             }
@@ -37,21 +38,21 @@ namespace SnakesAndLadderEvyatar.Controllers
 
         // Start a game as a new player 
         [HttpPost]
-        public GameLogic.Player StartNewGame(string name)
+        public Player StartNewGame(string name)
         {
             return _playerRepository.CreateAndStartGame(name);
         }
 
         // Assistant method to check all the players
         [HttpGet("all")]
-        public IEnumerable<GameLogic.Player> GetPlayerStatus()
+        public IEnumerable<Player> GetPlayerStatus()
         {
             return _playerRepository.GetAllPlayers();
         }
        
         // Assistant method to check for the best player (taken least turns to finish the game)
         [HttpGet("best")]
-        public GameLogic.Player GetBestPlayer()
+        public Player GetBestPlayer()
         {
             return _playerRepository.GetBestPlayer();
         }

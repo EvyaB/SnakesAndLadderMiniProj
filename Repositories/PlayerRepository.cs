@@ -1,9 +1,7 @@
-﻿using SnakesAndLadderEvyatar.GameLogic;
+﻿using SnakesAndLadderEvyatar.Data;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace SnakesAndLadderEvyatar.Repositories
 {
@@ -23,9 +21,10 @@ namespace SnakesAndLadderEvyatar.Repositories
             Player newPlayer = new Player()
             {
                 PlayerName = name,
-                PlayerGameState = Player.GameState.Ingame,
+                PlayerGameState = Player.GameState.Playing,
                 TurnNumber = 0,
-                CurrentCell = new Tuple<int, int>(0, 0)
+                CurrentCell = new Tuple<int, int>(0, 0),
+                GameStartDateTime = DateTime.Now
             };
 
             // Add the player to the list of players
@@ -37,8 +36,7 @@ namespace SnakesAndLadderEvyatar.Repositories
         public Tuple<Player, bool> GetPlayer(string name)
         {
             Tuple<Player, bool> result;
-            Player playerData;
-            bool foundPlayer = _players.TryGetValue(name, out playerData);
+            bool foundPlayer = _players.TryGetValue(name, out Player playerData);
 
             if (foundPlayer)
             {

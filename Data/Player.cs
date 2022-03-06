@@ -3,14 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SnakesAndLadderEvyatar.GameLogic
+namespace SnakesAndLadderEvyatar.Data
 {
     public class Player
     {
+        public int Id { get; set; }
+
         public enum GameState
         {
             Unrecognized = 0,
-            Ingame = 1,
+            Playing = 1,
             Finished = 2
         }
 
@@ -18,5 +20,6 @@ namespace SnakesAndLadderEvyatar.GameLogic
         public GameState PlayerGameState { get; set; }
         public int TurnNumber { get; set; }
         public Cell CurrentCell { get; set; }
+        public DateTime GameStartDateTime { get; set; }
     }
 }
