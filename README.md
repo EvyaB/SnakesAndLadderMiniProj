@@ -48,10 +48,10 @@ Row and Column numbering starts from 0 and goes up to 6 (including!) = final cel
 
 ### Architecture:
 Project is separated into several parts:
-1. Controllers: Define the available REST API (only PlayerController for now).
-2. Repositories: Access layer between the controller and the game logic. 
-3. GameLogic: Data classes and the GameManager service that implement all the actual game logic.
-4. Data: Basic data structures (models) that are used setup the Database.
-5. Program&Startup files (usual ASP.Net core API files that setup the web api, Swagger and so on).
+1. Controllers: Define the available REST API of the game.
+2. GameLogic: HostedServices that implement and play the actual game logic in the background.
+3. Repositories: Access layer between the controller and the game logic. 
+4. Models: The basic data structures that are used.
+5. Setup files: Configurations, Program & Startup files (usual ASP.Net core API files that setup the web api, Swagger and so on).
 
 The project is using a MySql DB that is created code-first through Entity Framework.
