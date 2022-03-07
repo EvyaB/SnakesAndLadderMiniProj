@@ -11,13 +11,13 @@ namespace SnakesAndLadderEvyatar.Repositories
 {
     public class PlayerRepository : IPlayerRepository
     {
-        private readonly IGameRepository _gameRepository;
-       // private readonly DataContext _dataContext;
+        private readonly IScoreboardRepository _scoreboardRepository;
+        // private readonly DataContext _dataContext;
         private readonly IServiceScopeFactory _scopeFactory;
 
-        public PlayerRepository(IGameRepository gameRepository, IServiceScopeFactory scopeFactory)
+        public PlayerRepository(IScoreboardRepository scoreboardRepository, IServiceScopeFactory scopeFactory)
         {
-            _gameRepository = gameRepository;
+            _scoreboardRepository = scoreboardRepository;
             _scopeFactory = scopeFactory;
         }
 
@@ -52,7 +52,7 @@ namespace SnakesAndLadderEvyatar.Repositories
 
             if (playerData != null)
             {
-                result = new Tuple<Player, bool>(playerData, _gameRepository.GetBestPlayer() == playerData);
+                result = new Tuple<Player, bool>(playerData, _scoreboardRepository.GetBestPlayer() == playerData);
             }
             else
             {
@@ -77,7 +77,7 @@ namespace SnakesAndLadderEvyatar.Repositories
         }
         public async Task<Player> GetBestPlayer()
         {
-            return _gameRepository.GetBestPlayer();
+            return _scoreboardRepository.GetBestPlayer();
         }
     }
 }

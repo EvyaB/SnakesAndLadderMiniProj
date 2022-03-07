@@ -7,17 +7,16 @@ using SnakesAndLadderEvyatar.Data;
 
 namespace SnakesAndLadderEvyatar.Repositories
 {
-    public class GameRepository : IGameRepository
+    public class ScoreboardRepository : IScoreboardRepository
     {
-        private GameBoard _gameBoard;
         private Scoreboard _scoreboard;
+        private readonly GameboardRepository _gameboardRepository;
 
-        public GameRepository()
+        public ScoreboardRepository()
         {
-            _gameBoard = new GameBoard();
             _scoreboard = new Scoreboard();
 
-            _gameBoard.Initialize();
+            _gameboardRepository = new GameboardRepository();
         }
 
         public Player GetBestPlayer()
@@ -27,17 +26,17 @@ namespace SnakesAndLadderEvyatar.Repositories
 
         public Cell GetFinalCell()
         {
-            return new Cell(_gameBoard.BoardSize);
+            return _gameboardRepository.GetFinalCell();
         }
 
         public int GetBoardRowsCount()
         {
-            return _gameBoard.BoardSize.Item1;
+            return _gameboardRepository.GetBoardRowsCount();
         }
 
         public int GetBoardColumnsCount()
         {
-            return _gameBoard.BoardSize.Item2;
+            return _gameboardRepository.GetBoardColumnsCount();
         }
 
         public void ReportPlayerScore(Player player)
@@ -47,10 +46,7 @@ namespace SnakesAndLadderEvyatar.Repositories
 
         public bool GetCellModifier(Cell cell, out CellModifier cellModifier)
         {
-            cellModifier = _gameBoard.GetCellModifier(cell);
-
-            // Report if the cell modifier is valid (=cell has a modifier)
-            return (cellModifier != null); 
+            return _gameboardRepository.GetCellModifier(cell, out cellModifier);
         }
     }
 }

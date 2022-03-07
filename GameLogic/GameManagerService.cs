@@ -13,13 +13,16 @@ namespace SnakesAndLadderEvyatar.GameLogic
     public class GameManagerService : BackgroundService
     {
         private static int TURNS_TIMER_MILLISECONDS = 3000;
-        private Repositories.IGameRepository _gameRepository;
-        private Repositories.IPlayerRepository _playerRepository;
+        private readonly Repositories.IGameboardRepository _gameboardRepository;
+        private readonly Repositories.IScoreboardRepository _scoreboardRepository;
+        private readonly Repositories.IPlayerRepository _playerRepository;
         private readonly IServiceScopeFactory _scopeFactory;
 
-        public GameManagerService(Repositories.IGameRepository gameRepository, Repositories.IPlayerRepository playerRepository, IServiceScopeFactory scopeFactory)
+        public GameManagerService(Repositories.IGameboardRepository gameboardRepository, IScoreboardRepository scoreboardRepository,
+                                  Repositories.IPlayerRepository playerRepository, IServiceScopeFactory scopeFactory)
         {
-            _gameRepository = gameRepository;
+            _gameboardRepository = gameboardRepository;
+            _scoreboardRepository = scoreboardRepository;
             _playerRepository = playerRepository;
             _scopeFactory = scopeFactory;
         }
@@ -57,10 +60,10 @@ namespace SnakesAndLadderEvyatar.GameLogic
             MovePlayer(player);
 
             // Check if reached final cell (=won game)
-            if (player.CurrentCell == _gameRepository.GetFinalCell())
+            if (player.CurrentCell == _gameboardRepository.GetFinalCell())
             {
                 player.PlayerGameState = Player.GameState.Finished;
-                _gameRepository.ReportPlayerScore(player);
+                _scoreboardRepository.ReportPlayerScore(player);
             }
         }
 
@@ -83,11 +86,11 @@ namespace SnakesAndLadderEvyatar.GameLogic
             {
                 // This is an Even row
                 // Check if we are going to pass the border of the board and have to go up
-                if (player.CurrentCell.Column + steps > _gameRepository.GetBoardColumnsCount())
+                if (player.CurrentCell.Column + steps > _gameboardRepository.GetBoardColumnsCount())
                 {
                     player.CurrentCell.Row++;
-                    int remainingSteps = steps - (_gameRepository.GetBoardColumnsCount() - player.CurrentCell.Column) - 1; // Move to the border, then up one cell
-                    player.CurrentCell.Column = _gameRepository.GetBoardColumnsCount() - remainingSteps;
+                    int remainingSteps = steps - (_gameboardRepository.GetBoardColumnsCount() - player.CurrentCell.Column) - 1; // Move to the border, then up one cell
+                    player.CurrentCell.Column = _gameboardRepository.GetBoardColumnsCount() - remainingSteps;
                 }
                 else
                 {
@@ -115,7 +118,7 @@ namespace SnakesAndLadderEvyatar.GameLogic
         {
             // Check if there is any modifier at player location
             CellModifier cellModifier;
-            bool hasCellModifier = _gameRepository.GetCellModifier(player.CurrentCell, out cellModifier);
+            bool hasCellModifier = _gameboardRepository.GetCellModifier(player.CurrentCell, out cellModifier);
 
             if (hasCellModifier)
             {
@@ -130,11 +133,10 @@ namespace SnakesAndLadderEvyatar.GameLogic
             if (player.CurrentCell.Column < 0) { player.CurrentCell.Column = 0; }
 
             // Check if we 'went pass' the final cell (went to the row above the final cell), if so clamp back to it
-            if (player.CurrentCell.Row > _gameRepository.GetBoardRowsCount())
+            if (player.CurrentCell.Row > _gameboardRepository.GetBoardRowsCount())
             {
-                player.CurrentCell = _gameRepository.GetFinalCell();
+                player.CurrentCell = _gameboardRepository.GetFinalCell();
             }
         }
-
     }
 }
