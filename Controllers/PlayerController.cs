@@ -12,7 +12,7 @@ namespace SnakesAndLadderEvyatar.Controllers
     [Route("[controller]")]
     public class PlayerController : ControllerBase
     {
-        private Repositories.IPlayerRepository _playerRepository;
+        private readonly Repositories.IPlayerRepository _playerRepository;
 
         public PlayerController(Repositories.IPlayerRepository playerRepository)
         {
@@ -26,7 +26,7 @@ namespace SnakesAndLadderEvyatar.Controllers
             Tuple<Player, bool> player = await _playerRepository.GetPlayer(name);
             
             // Check if the player was found
-            if (player.Item1.PlayerGameState == Player.GameState.Unrecognized)
+            if (player.Item1 != null)
             {
                 return NotFound();
             }
@@ -38,9 +38,9 @@ namespace SnakesAndLadderEvyatar.Controllers
 
         // Start a game as a new player 
         [HttpPost]
-        public async Task<Player> StartNewGame(string name)
+        public async Task<Player> CreateNewPlayer(string name)
         {
-            return await _playerRepository.CreateAndStartGame(name);
+            return await _playerRepository.CreatePlayer(name);
         }
 
         // Assistant method to check all the players

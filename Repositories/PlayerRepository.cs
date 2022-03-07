@@ -21,15 +21,11 @@ namespace SnakesAndLadderEvyatar.Repositories
             _scopeFactory = scopeFactory;
         }
 
-        public async Task<Player> CreateAndStartGame(string name)
+        public async Task<Player> CreatePlayer(string name)
         {
             Player newPlayer = new Player()
             {
-                PlayerName = name,
-                PlayerGameState = Player.GameState.Playing,
-                TurnNumber = 0,
-                CurrentCell = new Tuple<int, int>(0, 0),
-                GameStartDateTime = DateTime.Now
+                PlayerName = name
             };
 
             using var scope = _scopeFactory.CreateScope();
@@ -48,7 +44,7 @@ namespace SnakesAndLadderEvyatar.Repositories
             DataContext _dataContext = scope.ServiceProvider.GetRequiredService<DataContext>();
 
             Tuple<Player, bool> result;
-            Player playerData = await _dataContext.Players.FirstOrDefaultAsync(p => p.PlayerName == name);
+            Player playerData = await _dataContext.Players.Include(p => p.Games).FirstOrDefaultAsync(p => p.PlayerName == name);
 
             if (playerData != null)
             {
@@ -56,7 +52,26 @@ namespace SnakesAndLadderEvyatar.Repositories
             }
             else
             {
-                playerData = new Player() { PlayerName = name, PlayerGameState = Player.GameState.Unrecognized };
+                playerData = new Player();
+                result = new Tuple<Player, bool>(playerData, false);
+            }
+
+            return result;
+        }
+        public async Task<Tuple<Player, bool>> GetPlayer(int id)
+        {
+            using var scope = _scopeFactory.CreateScope();
+            DataContext _dataContext = scope.ServiceProvider.GetRequiredService<DataContext>();
+
+            Tuple<Player, bool> result;
+            Player playerData = await _dataContext.Players.FindAsync(id);
+
+            if (playerData != null)
+            {
+                result = new Tuple<Player, bool>(playerData, _scoreboardRepository.GetBestPlayer() == playerData);
+            }
+            else
+            {
                 result = new Tuple<Player, bool>(playerData, false);
             }
 
@@ -69,12 +84,7 @@ namespace SnakesAndLadderEvyatar.Repositories
             DataContext _dataContext = scope.ServiceProvider.GetRequiredService<DataContext>();
             return await _dataContext.Players.ToListAsync();
         }
-        public async Task<IEnumerable<Player>> GetAllPlayingPlayers()
-        {
-            using var scope = _scopeFactory.CreateScope();
-            DataContext _dataContext = scope.ServiceProvider.GetRequiredService<DataContext>();
-            return await _dataContext.Players.Where(player => player.PlayerGameState == Player.GameState.Playing).ToListAsync();
-        }
+
         public async Task<Player> GetBestPlayer()
         {
             return _scoreboardRepository.GetBestPlayer();

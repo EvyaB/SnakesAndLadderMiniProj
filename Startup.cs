@@ -31,9 +31,9 @@ namespace SnakesAndLadderEvyatar
         {
             services.AddDbContext<DataContext>(x => x.UseMySql(Configuration.GetConnectionString("DefaultConnection"),
                 mySqlOptionsAction: sqlOptions => sqlOptions.EnableRetryOnFailure())); 
-            services.AddSingleton<Repositories.IScoreboardRepository, Repositories.ScoreboardRepository>();
+            services.AddScoped<Repositories.IScoreboardRepository, Repositories.ScoreboardRepository>();
             services.AddSingleton<Repositories.IGameboardRepository, Repositories.GameboardRepository>();
-            services.AddSingleton<Repositories.IPlayerRepository, Repositories.PlayerRepository>();
+            services.AddScoped<Repositories.IPlayerRepository, Repositories.PlayerRepository>();
             services.AddHostedService<GameLogic.GameManagerService>();
 
             services.AddControllers();

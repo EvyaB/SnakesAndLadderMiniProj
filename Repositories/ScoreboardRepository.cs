@@ -9,44 +9,23 @@ namespace SnakesAndLadderEvyatar.Repositories
 {
     public class ScoreboardRepository : IScoreboardRepository
     {
-        private Scoreboard _scoreboard;
-        private readonly GameboardRepository _gameboardRepository;
+        private readonly DataContext _dataContext;
 
-        public ScoreboardRepository()
+        public ScoreboardRepository(DataContext dataContext)
         {
-            _scoreboard = new Scoreboard();
-
-            _gameboardRepository = new GameboardRepository();
+            _dataContext = dataContext;
         }
 
         public Player GetBestPlayer()
         {
-            return _scoreboard.BestPlayer;
+            Game bestGame = GetBestGame();
+            return bestGame?.Player;
         }
 
-        public Cell GetFinalCell()
+        public Game GetBestGame()
         {
-            return _gameboardRepository.GetFinalCell();
-        }
-
-        public int GetBoardRowsCount()
-        {
-            return _gameboardRepository.GetBoardRowsCount();
-        }
-
-        public int GetBoardColumnsCount()
-        {
-            return _gameboardRepository.GetBoardColumnsCount();
-        }
-
-        public void ReportPlayerScore(Player player)
-        {
-            _scoreboard.AddPlayerScore(player);
-        }
-
-        public bool GetCellModifier(Cell cell, out CellModifier cellModifier)
-        {
-            return _gameboardRepository.GetCellModifier(cell, out cellModifier);
+            return _dataContext.Games.Where(game => game.CurrentGameState == Game.GameState.Finished)
+                .OrderBy(player => player.TurnNumber).First();
         }
     }
 }

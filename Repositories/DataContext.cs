@@ -7,14 +7,15 @@ namespace SnakesAndLadderEvyatar.Repositories
     {
         public DataContext(DbContextOptions dataContextOptions) : base(dataContextOptions)
         {
-
         }
 
         public DbSet<Player> Players { get; set; }
+        public DbSet<Game> Games { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Player>().OwnsOne(x => x.CurrentCell);
+            modelBuilder.Entity<Game>().OwnsOne(game => game.PlayerPosition);
+            modelBuilder.Entity<Game>().HasIndex(game => new {game.CurrentGameState, game.TurnNumber}); // filtering by gamestate, then by turn number
         }
     }
 }

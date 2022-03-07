@@ -10,6 +10,6 @@ namespace SnakesAndLadderEvyatar.Repositories
     public interface IScoreboardRepository
     {
         public Player GetBestPlayer();
-        public void ReportPlayerScore(Player player);
+        public Game GetBestGame();
     }
 }

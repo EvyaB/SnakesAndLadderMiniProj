@@ -12,11 +12,9 @@ namespace SnakesAndLadderEvyatar.Repositories
         Task<Tuple<Player, bool>> GetPlayer(string name);
 
         // Create a new player with a given name, and immediately start playing the game for him
-        Task<Player> CreateAndStartGame(string name);
-
+        Task<Player> CreatePlayer(string name);
         // Assistant methods for debugging
         Task<IEnumerable<Player>> GetAllPlayers();
-        Task<IEnumerable<Player>> GetAllPlayingPlayers();
         Task<Player> GetBestPlayer();
     }
 }
