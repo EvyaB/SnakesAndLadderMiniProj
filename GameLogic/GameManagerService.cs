@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using SnakesAndLadderEvyatar.Data;
+using SnakesAndLadderEvyatar.Repositories;
 
 namespace SnakesAndLadderEvyatar.GameLogic
 {
@@ -13,11 +15,13 @@ namespace SnakesAndLadderEvyatar.GameLogic
         private static int TURNS_TIMER_MILLISECONDS = 3000;
         private Repositories.IGameRepository _gameRepository;
         private Repositories.IPlayerRepository _playerRepository;
+        private readonly IServiceScopeFactory _scopeFactory;
 
-        public GameManagerService(Repositories.IGameRepository gameRepository, Repositories.IPlayerRepository playerRepository)
+        public GameManagerService(Repositories.IGameRepository gameRepository, Repositories.IPlayerRepository playerRepository, IServiceScopeFactory scopeFactory)
         {
             _gameRepository = gameRepository;
             _playerRepository = playerRepository;
+            _scopeFactory = scopeFactory;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -29,11 +33,17 @@ namespace SnakesAndLadderEvyatar.GameLogic
         {
             while (!stoppingToken.IsCancellationRequested)
             {
+                using var scope = _scopeFactory.CreateScope();
+                DataContext _dataContext = scope.ServiceProvider.GetRequiredService<DataContext>();
+
                 // Go over every 'ingame' (actively playing) player and run his/her turn
-                foreach (Player currentPlayer in _playerRepository.GetAllPlayers().Where(player => player.PlayerGameState == Player.GameState.Playing))
+                foreach (Player currentPlayer in await _playerRepository.GetAllPlayingPlayers())
                 {
                     PlayPlayerTurn(currentPlayer);
+                    _dataContext.Update(currentPlayer);
                 }
+
+                await _dataContext.SaveChangesAsync();
 
                 await Task.Delay(TURNS_TIMER_MILLISECONDS, stoppingToken);
             }

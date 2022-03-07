@@ -21,9 +21,9 @@ namespace SnakesAndLadderEvyatar.Controllers
 
         // Get the player and a flag reporting if he is the best player in the scoreboard
         [HttpGet("{name}")]
-        public IActionResult GetPlayerStatus(string name)
+        public async Task<IActionResult> GetPlayerStatus(string name)
         {
-            Tuple<Player, bool> player = _playerRepository.GetPlayer(name);
+            Tuple<Player, bool> player = await _playerRepository.GetPlayer(name);
             
             // Check if the player was found
             if (player.Item1.PlayerGameState == Player.GameState.Unrecognized)
@@ -38,23 +38,23 @@ namespace SnakesAndLadderEvyatar.Controllers
 
         // Start a game as a new player 
         [HttpPost]
-        public Player StartNewGame(string name)
+        public async Task<Player> StartNewGame(string name)
         {
-            return _playerRepository.CreateAndStartGame(name);
+            return await _playerRepository.CreateAndStartGame(name);
         }
 
         // Assistant method to check all the players
         [HttpGet("all")]
-        public IEnumerable<Player> GetPlayerStatus()
+        public async Task<IEnumerable<Player>> GetPlayerStatus()
         {
-            return _playerRepository.GetAllPlayers();
+            return await _playerRepository.GetAllPlayers();
         }
        
         // Assistant method to check for the best player (taken least turns to finish the game)
         [HttpGet("best")]
-        public Player GetBestPlayer()
+        public async Task<Player> GetBestPlayer()
         {
-            return _playerRepository.GetBestPlayer();
+            return await _playerRepository.GetBestPlayer();
         }
     }
 }

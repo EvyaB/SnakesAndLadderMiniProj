@@ -2,21 +2,26 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace SnakesAndLadderEvyatar.Repositories
 {
     public class PlayerRepository : IPlayerRepository
     {
-        private ConcurrentDictionary<string, Player> _players;
         private readonly IGameRepository _gameRepository;
+       // private readonly DataContext _dataContext;
+        private readonly IServiceScopeFactory _scopeFactory;
 
-        public PlayerRepository(IGameRepository gameRepository)
+        public PlayerRepository(IGameRepository gameRepository, IServiceScopeFactory scopeFactory)
         {
-            _players = new ConcurrentDictionary<string, Player>();
             _gameRepository = gameRepository;
+            _scopeFactory = scopeFactory;
         }
 
-        public Player CreateAndStartGame(string name)
+        public async Task<Player> CreateAndStartGame(string name)
         {
             Player newPlayer = new Player()
             {
@@ -27,18 +32,25 @@ namespace SnakesAndLadderEvyatar.Repositories
                 GameStartDateTime = DateTime.Now
             };
 
+            using var scope = _scopeFactory.CreateScope();
+            DataContext _dataContext = scope.ServiceProvider.GetRequiredService<DataContext>();
+
             // Add the player to the list of players
-            _players[name] = newPlayer;
+            await _dataContext.Players.AddAsync(newPlayer);
+            await _dataContext.SaveChangesAsync();
 
             return newPlayer;
         }
 
-        public Tuple<Player, bool> GetPlayer(string name)
+        public async Task<Tuple<Player, bool>> GetPlayer(string name)
         {
-            Tuple<Player, bool> result;
-            bool foundPlayer = _players.TryGetValue(name, out Player playerData);
+            using var scope = _scopeFactory.CreateScope();
+            DataContext _dataContext = scope.ServiceProvider.GetRequiredService<DataContext>();
 
-            if (foundPlayer)
+            Tuple<Player, bool> result;
+            Player playerData = await _dataContext.Players.FirstOrDefaultAsync(p => p.PlayerName == name);
+
+            if (playerData != null)
             {
                 result = new Tuple<Player, bool>(playerData, _gameRepository.GetBestPlayer() == playerData);
             }
@@ -51,11 +63,19 @@ namespace SnakesAndLadderEvyatar.Repositories
             return result;
         }
 
-        public IEnumerable<Player> GetAllPlayers()
+        public async Task<IEnumerable<Player>> GetAllPlayers()
         {
-            return _players.Values;
+            using var scope = _scopeFactory.CreateScope();
+            DataContext _dataContext = scope.ServiceProvider.GetRequiredService<DataContext>();
+            return await _dataContext.Players.ToListAsync();
         }
-        public Player GetBestPlayer()
+        public async Task<IEnumerable<Player>> GetAllPlayingPlayers()
+        {
+            using var scope = _scopeFactory.CreateScope();
+            DataContext _dataContext = scope.ServiceProvider.GetRequiredService<DataContext>();
+            return await _dataContext.Players.Where(player => player.PlayerGameState == Player.GameState.Playing).ToListAsync();
+        }
+        public async Task<Player> GetBestPlayer()
         {
             return _gameRepository.GetBestPlayer();
         }

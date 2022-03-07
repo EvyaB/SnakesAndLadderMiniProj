@@ -11,6 +11,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using SnakesAndLadderEvyatar.Repositories;
 
 namespace SnakesAndLadderEvyatar
 {
@@ -26,6 +29,8 @@ namespace SnakesAndLadderEvyatar
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<DataContext>(x => x.UseMySql(Configuration.GetConnectionString("DefaultConnection"),
+                mySqlOptionsAction: sqlOptions => sqlOptions.EnableRetryOnFailure())); 
             services.AddSingleton<Repositories.IGameRepository, Repositories.GameRepository>();
             services.AddSingleton<Repositories.IPlayerRepository, Repositories.PlayerRepository>();
             services.AddHostedService<GameLogic.GameManagerService>();
