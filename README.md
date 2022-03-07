@@ -19,7 +19,23 @@ by Evyatar Bitton
         - When the player lands on a snakes head, he is transported to its tail.
         - When the player lands on a ladder’s bottom, he is transported to its top.
     * Each game doesn’t affect other games (e.g. players can be on the same tile)
-	
+
+### Additional assignments:
+Add your own MySql DB:
+
+    a. Create a new EF repository for games. Interface and models
+    b. Define the entity to include the id, game uuid, startedAt(timestamp), player name, score, duration, state
+    c. Define methods:
+        AddGame(GameEntity game)
+        EditGame(GameEntity game)
+        DeleteGame(uuid)
+        GetGameByUuid(uuid)
+        GetGameByFilterOptions => Player name, isActive here use method Filter(Expression<Func<GameEntity, bool>> predicate)
+    d. run migration to init the DB with the games table
+Modify your API layer as needed to expose the new abilities.
+
+Unit tests: Add unit tests for the services layer.
+
 ### Current Board Game
 ![Current Game Board](CurrentGameBoard.PNG)
 
@@ -31,8 +47,11 @@ Row and Column numbering starts from 0 and goes up to 6 (including!) = final cel
 3. Board game is currently constant and is created in the Boardgame class. This may be modified in the future, for example to read these settings from a file
 
 ### Architecture:
-Project is separated into four parts:
+Project is separated into several parts:
 1. Controllers: Define the available REST API (only PlayerController for now).
 2. Repositories: Access layer between the controller and the game logic. 
 3. GameLogic: Data classes and the GameManager service that implement all the actual game logic.
-4. Program&Startup files (usual ASP.Net core API files that setup the web api, Swagger and so on).
+4. Data: Basic data structures (models) that are used setup the Database.
+5. Program&Startup files (usual ASP.Net core API files that setup the web api, Swagger and so on).
+
+The project is using a MySql DB that is created code-first through Entity Framework.
