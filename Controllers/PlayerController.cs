@@ -20,7 +20,7 @@ namespace SnakesAndLadderEvyatar.Controllers
         }
 
         // Get the player and a flag reporting if he is the best player in the scoreboard
-        [HttpGet("{name}")]
+        [HttpGet("{name:alpha}")]
         public async Task<IActionResult> GetPlayerStatus(string name)
         {
             Tuple<Player, bool> player = await _playerRepository.GetPlayer(name);
@@ -28,11 +28,28 @@ namespace SnakesAndLadderEvyatar.Controllers
             // Check if the player was found
             if (player.Item1 != null)
             {
-                return NotFound();
+                return Ok(player);
             }
             else
             {
+                return NotFound();
+            }
+        }
+
+        // Get the player and a flag reporting if he is the best player in the scoreboard
+        [HttpGet("{id:int}")]
+        public async Task<IActionResult> GetPlayerStatus(int id)
+        {
+            Tuple<Player, bool> player = await _playerRepository.GetPlayer(id);
+
+            // Check if the player was found
+            if (player.Item1 != null)
+            {
                 return Ok(player);
+            }
+            else
+            {
+                return NotFound();
             }
         }
 

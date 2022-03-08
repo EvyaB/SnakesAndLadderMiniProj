@@ -36,46 +36,24 @@ namespace SnakesAndLadderEvyatar.Repositories
 
         public async Task<Tuple<Player, bool>> GetPlayer(string name)
         {
-            Tuple<Player, bool> result;
             Player playerData = await _dataContext.Players.Include(p => p.Games).FirstOrDefaultAsync(p => p.PlayerName == name);
-
-            if (playerData != null)
-            {
-                result = new Tuple<Player, bool>(playerData, _scoreboardRepository.GetBestPlayer() == playerData);
-            }
-            else
-            {
-                playerData = new Player();
-                result = new Tuple<Player, bool>(playerData, false);
-            }
-
-            return result;
+            return new Tuple<Player, bool>(playerData, await _scoreboardRepository.IsBestPlayer(playerData));
         }
-        public async Task<Tuple<Player, bool>> GetPlayer(int id)
+
+        public async Task<Tuple<Player, bool>> GetPlayer(int playerId)
         {
-            Tuple<Player, bool> result;
-            Player playerData = await _dataContext.Players.FindAsync(id);
-
-            if (playerData != null)
-            {
-                result = new Tuple<Player, bool>(playerData, _scoreboardRepository.GetBestPlayer() == playerData);
-            }
-            else
-            {
-                result = new Tuple<Player, bool>(playerData, false);
-            }
-
-            return result;
+            Player playerData = await _dataContext.Players.Include(p => p.Games).FirstOrDefaultAsync(p => p.Id == playerId);
+            return new Tuple<Player, bool>(playerData, await _scoreboardRepository.IsBestPlayer(playerData));
         }
 
         public async Task<IEnumerable<Player>> GetAllPlayers()
         {
-            return await _dataContext.Players.ToListAsync();
+            return await _dataContext.Players.Include(player => player.Games).ToListAsync();
         }
 
         public async Task<Player> GetBestPlayer()
         {
-            return _scoreboardRepository.GetBestPlayer();
+            return await _scoreboardRepository.GetBestPlayer();
         }
     }
 }

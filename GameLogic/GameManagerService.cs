@@ -32,16 +32,16 @@ namespace SnakesAndLadderEvyatar.GameLogic
             while (!stoppingToken.IsCancellationRequested)
             {
                 using var scope = _scopeFactory.CreateScope();
-                DataContext _dataContext = scope.ServiceProvider.GetRequiredService<DataContext>();
+                DataContext dataContext = scope.ServiceProvider.GetRequiredService<DataContext>();
 
                 // Go over every 'ingame' (actively playing) player and run his/her turn
-                foreach (Game game in _dataContext.Games.Where(game => game.CurrentGameState == Game.GameState.Playing))
+                foreach (Game game in dataContext.Games.Where(game => game.CurrentGameState == Game.GameState.Playing))
                 {
                     PlayTurnInGame(game);
-                    _dataContext.Update(game);
+                    dataContext.Update(game);
                 }
 
-                await _dataContext.SaveChangesAsync(stoppingToken);
+                await dataContext.SaveChangesAsync(stoppingToken);
 
                 await Task.Delay(TURNS_TIMER_MILLISECONDS, stoppingToken);
             }
@@ -58,10 +58,11 @@ namespace SnakesAndLadderEvyatar.GameLogic
             if (game.PlayerPosition == _gameboardRepository.GetFinalCell())
             {
                 game.CurrentGameState = Game.GameState.Finished;
+                game.EndDateTime = DateTime.Now;
             }
         }
 
-        // Move player according to dice roll, snakes/ladders modiferes and the boundaries of the board
+        // Move player according to dice roll, snakes/ladders modifiers and the boundaries of the board
         private void MovePlayerInGame(Game game)
         {
             MovePlayerPerDiceRoll(game);

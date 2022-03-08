@@ -13,6 +13,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Newtonsoft.Json;
 using SnakesAndLadderEvyatar.Repositories;
 
 namespace SnakesAndLadderEvyatar
@@ -32,11 +33,14 @@ namespace SnakesAndLadderEvyatar
             services.AddDbContext<DataContext>(x => x.UseMySql(Configuration.GetConnectionString("DefaultConnection"),
                 mySqlOptionsAction: sqlOptions => sqlOptions.EnableRetryOnFailure())); 
             services.AddScoped<Repositories.IScoreboardRepository, Repositories.ScoreboardRepository>();
-            services.AddSingleton<Repositories.IGameboardRepository, Repositories.GameboardRepository>();
             services.AddScoped<Repositories.IPlayerRepository, Repositories.PlayerRepository>();
+            services.AddScoped<Repositories.IGameRepository, Repositories.GameRepository>();
+            services.AddSingleton<Repositories.IGameboardRepository, Repositories.GameboardRepository>();
             services.AddHostedService<GameLogic.GameManagerService>();
 
-            services.AddControllers();
+            services.AddControllers().AddNewtonsoftJson(options =>
+                options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            );
             services.AddSwaggerGen();
         }
 

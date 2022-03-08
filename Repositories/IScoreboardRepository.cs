@@ -9,7 +9,11 @@ namespace SnakesAndLadderEvyatar.Repositories
 {
     public interface IScoreboardRepository
     {
-        public Player GetBestPlayer();
-        public Game GetBestGame();
+        public Task<Player> GetBestPlayer();
+        public Task<Game> GetBestGame();
+        public Task<bool> IsBestGame(Game game);
+        public Task<bool> IsBestGame(int gameId);
+        public Task<bool> IsBestPlayer(Player player);
+        public Task<bool> IsBestPlayer(int playerId);
     }
 }
