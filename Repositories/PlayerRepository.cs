@@ -12,13 +12,12 @@ namespace SnakesAndLadderEvyatar.Repositories
     public class PlayerRepository : IPlayerRepository
     {
         private readonly IScoreboardRepository _scoreboardRepository;
-        // private readonly DataContext _dataContext;
-        private readonly IServiceScopeFactory _scopeFactory;
+        private readonly DataContext _dataContext;
 
-        public PlayerRepository(IScoreboardRepository scoreboardRepository, IServiceScopeFactory scopeFactory)
+        public PlayerRepository(IScoreboardRepository scoreboardRepository, DataContext dataContext)
         {
             _scoreboardRepository = scoreboardRepository;
-            _scopeFactory = scopeFactory;
+            _dataContext = dataContext;
         }
 
         public async Task<Player> CreatePlayer(string name)
@@ -27,9 +26,6 @@ namespace SnakesAndLadderEvyatar.Repositories
             {
                 PlayerName = name
             };
-
-            using var scope = _scopeFactory.CreateScope();
-            DataContext _dataContext = scope.ServiceProvider.GetRequiredService<DataContext>();
 
             // Add the player to the list of players
             await _dataContext.Players.AddAsync(newPlayer);
@@ -40,9 +36,6 @@ namespace SnakesAndLadderEvyatar.Repositories
 
         public async Task<Tuple<Player, bool>> GetPlayer(string name)
         {
-            using var scope = _scopeFactory.CreateScope();
-            DataContext _dataContext = scope.ServiceProvider.GetRequiredService<DataContext>();
-
             Tuple<Player, bool> result;
             Player playerData = await _dataContext.Players.Include(p => p.Games).FirstOrDefaultAsync(p => p.PlayerName == name);
 
@@ -60,9 +53,6 @@ namespace SnakesAndLadderEvyatar.Repositories
         }
         public async Task<Tuple<Player, bool>> GetPlayer(int id)
         {
-            using var scope = _scopeFactory.CreateScope();
-            DataContext _dataContext = scope.ServiceProvider.GetRequiredService<DataContext>();
-
             Tuple<Player, bool> result;
             Player playerData = await _dataContext.Players.FindAsync(id);
 
@@ -80,8 +70,6 @@ namespace SnakesAndLadderEvyatar.Repositories
 
         public async Task<IEnumerable<Player>> GetAllPlayers()
         {
-            using var scope = _scopeFactory.CreateScope();
-            DataContext _dataContext = scope.ServiceProvider.GetRequiredService<DataContext>();
             return await _dataContext.Players.ToListAsync();
         }
 
