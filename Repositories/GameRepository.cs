@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using SnakesAndLadderEvyatar.Data;
+using SnakesAndLadderEvyatar.DTO.Game;
 
 namespace SnakesAndLadderEvyatar.Repositories
 {
@@ -20,35 +21,37 @@ namespace SnakesAndLadderEvyatar.Repositories
             _playerRepository = playerRepository;
         }
 
-        public async Task<Tuple<Game, bool>> GetGame(int gameId)
+        public async Task<Tuple<GetGameDto, bool>> GetGame(int gameId)
         {
-            Game game = await _dataContext.Games.FindAsync(gameId);
-            return new Tuple<Game, bool>(game, await _scoreboardRepository.IsBestGame(game));
+            Game game = await _dataContext.Games.Include(game => game.Player).FirstOrDefaultAsync(game => game.Id == gameId);
+            return new Tuple<GetGameDto, bool>(new GetGameDto(game), await _scoreboardRepository.IsBestGame(game));
         }
 
-        public async Task<List<Game>> GetAllActiveGames()
+        public async Task<List<GetGameDto>> GetAllActiveGames()
         {
-            return await _dataContext.Games.Include(game => game.Player).Where(game => game.CurrentGameState == Game.GameState.Playing).ToListAsync();
+            return await _dataContext.Games.Include(game => game.Player).Where(game => game.CurrentGameState == Game.GameState.Playing).
+                                            Select(game => new GetGameDto(game)).ToListAsync();
         }
 
-        public async Task<List<Game>> GetAllGames()
+        public async Task<List<GetGameDto>> GetAllGames()
         {
-            return await _dataContext.Games.Include(game => game.Player).ToListAsync();
+            return await _dataContext.Games.Include(game => game.Player).Select(game => new GetGameDto(game)).ToListAsync();
         }
 
-        public async Task<List<Game>> GetAllGames(int playerId)
+        public async Task<List<GetGameDto>> GetAllGames(int playerId)
         {
-            return await _dataContext.Games.Include(game => game.Player).Where(game => game.PlayerId == playerId).ToListAsync();
+            return await _dataContext.Games.Include(game => game.Player).Where(game => game.PlayerId == playerId).Select(game => new GetGameDto(game)).ToListAsync();
         }
 
-        public async Task<Game> GetBestGame()
+        public async Task<GetGameDto> GetBestGame()
         {
-            return await _scoreboardRepository.GetBestGame();
+            Game bestGame = await _scoreboardRepository.GetBestGame();
+            return new GetGameDto(bestGame);
         }
 
-        public async Task<Game> CreateGame(int playerId)
+        public async Task<GetGameDto> CreateGame(AddGameDto gameDto)
         {
-            var result = await _playerRepository.GetPlayer(playerId);
+            var result = await _playerRepository.GetPlayer(gameDto.PlayerId);
             Player player = result.Item1;
 
             if (player == null)
@@ -61,20 +64,17 @@ namespace SnakesAndLadderEvyatar.Repositories
                 Game newGame = new Game()
                 {
                     CurrentGameState = Game.GameState.Playing,
-                    PlayerId = playerId,
+                    PlayerId = gameDto.PlayerId,
                     Player = player,
                     StartDateTime = DateTime.Now,
                     PlayerPosition = new Cell(0, 0),
                     TurnNumber = 0
                 };
 
-                //result.Item1.Games.Add(newGame);
-                //_dataContext.Update(player);
-
                 await _dataContext.AddAsync(newGame);
                 await _dataContext.SaveChangesAsync();
 
-                return newGame;
+                return new GetGameDto(newGame);
             }
         }
 
@@ -98,11 +98,11 @@ namespace SnakesAndLadderEvyatar.Repositories
             return await DeleteGame(game.Id);
         }
 
-        public async Task<Game> EditGame(Game newGameData)
+        public async Task<GetGameDto> EditGame(EditGameDto editedGame)
         {
-            if (newGameData == null) return null;
+            if (editedGame == null) return null;
 
-            Game originalGame = await _dataContext.Games.FindAsync(newGameData.Id);
+            Game originalGame = await _dataContext.Games.FindAsync(editedGame.Id);
             if (originalGame == null)
             {
                 // Game with this newGameData.Id does not exist, do nothing
@@ -110,17 +110,16 @@ namespace SnakesAndLadderEvyatar.Repositories
             }
             else
             {
-                originalGame.CurrentGameState = newGameData.CurrentGameState;
-                originalGame.PlayerId = newGameData.PlayerId;
-                originalGame.Player = newGameData.Player;
-                originalGame.PlayerPosition = newGameData.PlayerPosition;
-                originalGame.TurnNumber = newGameData.TurnNumber;
-                originalGame.StartDateTime = newGameData.StartDateTime;
-                originalGame.EndDateTime = newGameData.EndDateTime;
+                originalGame.PlayerId = (editedGame.PlayerId ?? originalGame.PlayerId);
+                originalGame.TurnNumber = (editedGame.TurnNumber ?? originalGame.TurnNumber);
+                originalGame.PlayerPosition = (editedGame.PlayerPosition ?? originalGame.PlayerPosition);
+                originalGame.CurrentGameState = (editedGame.CurrentGameState ?? originalGame.CurrentGameState);
+                originalGame.StartDateTime = (editedGame.StartDateTime ?? originalGame.StartDateTime);
+                originalGame.EndDateTime = (editedGame.EndDateTime ?? originalGame.EndDateTime);
 
                 _dataContext.Games.Update(originalGame);
                 await _dataContext.SaveChangesAsync();
-                return newGameData;
+                return new GetGameDto(originalGame);
             }
         }
     }

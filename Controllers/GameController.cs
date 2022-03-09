@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using SnakesAndLadderEvyatar.Data;
+using SnakesAndLadderEvyatar.DTO.Game;
 
 namespace SnakesAndLadderEvyatar.Controllers
 {
@@ -23,7 +24,7 @@ namespace SnakesAndLadderEvyatar.Controllers
         [HttpGet("{gameId}")]
         public async Task<IActionResult> GetGameStatus(int gameId)
         {
-            Tuple<Game, bool> game = await _gameRepository.GetGame(gameId);
+            Tuple<GetGameDto, bool> game = await _gameRepository.GetGame(gameId);
           
             // Check if the game was found
             if (game.Item1 != null)
@@ -38,9 +39,9 @@ namespace SnakesAndLadderEvyatar.Controllers
 
         // Start a game as a specific player 
         [HttpPost]
-        public async Task<Game> CreateNewGame(int playerId)
+        public async Task<GetGameDto> CreateNewGame(AddGameDto gameDto)
         {
-            return await _gameRepository.CreateGame(playerId);
+            return await _gameRepository.CreateGame(gameDto);
         }
 
         // Delete an existing game
@@ -50,30 +51,36 @@ namespace SnakesAndLadderEvyatar.Controllers
             return await _gameRepository.DeleteGame(gameId);
         }
 
+        [HttpPut]
+        public async Task<GetGameDto> EditGame(EditGameDto editedGame)
+        {
+            return await _gameRepository.EditGame(editedGame);
+        }
+
         // Assistant method to check all the active games
         [HttpGet("allActive")]
-        public async Task<IEnumerable<Game>> GetAllActiveGames()
+        public async Task<IEnumerable<GetGameDto>> GetAllActiveGames()
         {
             return await _gameRepository.GetAllActiveGames();
         }
 
         // Assistant method to check all the games
         [HttpGet("all")]
-        public async Task<IEnumerable<Game>> GetAllGames()
+        public async Task<IEnumerable<GetGameDto>> GetAllGames()
         {
             return await _gameRepository.GetAllGames();
         }
 
         // Assistant method to check all the games of specific Player
         [HttpGet("all{playerId}")]
-        public async Task<IEnumerable<Game>> GetAllGames(int playerId)
+        public async Task<IEnumerable<GetGameDto>> GetAllGames(int playerId)
         {
             return await _gameRepository.GetAllGames(playerId);
         }
 
         // Assistant method to check for the best game (taken least turns to finish the game)
         [HttpGet("best")]
-        public async Task<Game> GetBestGame()
+        public async Task<GetGameDto> GetBestGame()
         {
             return await _gameRepository.GetBestGame();
         }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace SnakesAndLadderEvyatar.Data
 {
@@ -11,8 +12,10 @@ namespace SnakesAndLadderEvyatar.Data
         public int Column { get; set; }
         public int Row { get; set; }
 
+        [JsonConstructor]
         public Cell(int row, int column) { Row = row; Column = column; }
         public Cell(Tuple<int, int> tuple) { Row = tuple.Item1; Column = tuple.Item2; }
+
         public static implicit operator Tuple<int, int>(Cell cell) => new Tuple<int, int>(cell.Row, cell.Column);
         public static implicit operator Cell(Tuple<int, int> tuple) => new Cell(tuple);
 
