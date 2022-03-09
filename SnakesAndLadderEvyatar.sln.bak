@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.32126.317
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SnakesAndLadderEvyatar", "Snakes&Ladders\SnakesAndLadderEvyatar.csproj", "{53B7B42E-F44F-4C31-B1DD-E2F99DEF5DC0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SnakesAndLadderEvyatar", Snakes&Ladders\"SnakesAndLadderEvyatar.csproj", "{53B7B42E-F44F-4C31-B1DD-E2F99DEF5DC0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\UnitTests.csproj", "{5540D49C-C2DB-42F0-9AF2-6AEA14A6C3D9}"
 EndProject

@@ -5,12 +5,8 @@ namespace SnakesAndLadderEvyatar.Repositories
 {
     public class DataContext : DbContext
     {
-        public DataContext(DbContextOptions dataContextOptions) : base(dataContextOptions)
-        {
-        }
-
-        public DbSet<Player> Players { get; set; }
-        public DbSet<Game> Games { get; set; }
+        public virtual DbSet<Player> Players { get; set; }
+        public virtual DbSet<Game> Games { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
