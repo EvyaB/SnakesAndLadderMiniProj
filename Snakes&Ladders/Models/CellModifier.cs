@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SnakesAndLadderEvyatar.Data
+namespace SnakesAndLadderEvyatar.Models
 {
     public class CellModifier : IComparable<CellModifier>
     {

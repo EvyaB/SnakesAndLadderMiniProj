@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SnakesAndLadderEvyatar.Data;
+using SnakesAndLadderEvyatar.Models;
 
 namespace SnakesAndLadderEvyatar.Repositories
 {

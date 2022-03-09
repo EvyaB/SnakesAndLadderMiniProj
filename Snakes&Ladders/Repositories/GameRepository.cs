@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using SnakesAndLadderEvyatar.Data;
+using SnakesAndLadderEvyatar.Models;
 using SnakesAndLadderEvyatar.DTO.Game;
 using SnakesAndLadderEvyatar.DTO.Player;
 

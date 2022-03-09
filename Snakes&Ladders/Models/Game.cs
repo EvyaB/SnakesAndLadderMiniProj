@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SnakesAndLadderEvyatar.Data
+namespace SnakesAndLadderEvyatar.Models
 {
     public class Game
     {

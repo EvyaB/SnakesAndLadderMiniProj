@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using SnakesAndLadderEvyatar.Data;
+using SnakesAndLadderEvyatar.Models;
 using SnakesAndLadderEvyatar.DTO.Game;
 
 namespace SnakesAndLadderEvyatar.Repositories

@@ -6,7 +6,7 @@ using Xunit;
 using Moq;
 using Moq.EntityFrameworkCore;
 using SnakesAndLadderEvyatar.Repositories;
-using SnakesAndLadderEvyatar.Data;
+using SnakesAndLadderEvyatar.Models;
 
 namespace UnitTests
 {

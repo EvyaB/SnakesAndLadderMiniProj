@@ -10,7 +10,7 @@ namespace SnakesAndLadderEvyatar.DTO.Player
         public string Name { get; set; }
         public List<GetGameDto> Games { get; set; }
 
-        public GetPlayerDto(Data.Player player)
+        public GetPlayerDto(Models.Player player)
         {
             Id = player.Id;
             Name = player.PlayerName;

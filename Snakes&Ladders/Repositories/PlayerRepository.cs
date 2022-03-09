@@ -1,4 +1,4 @@
-﻿using SnakesAndLadderEvyatar.Data;
+﻿using SnakesAndLadderEvyatar.Models;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
