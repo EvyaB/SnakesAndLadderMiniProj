@@ -2,20 +2,25 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using SnakesAndLadderEvyatar.Data;
+using SnakesAndLadderEvyatar.DTO.Player;
 
 namespace SnakesAndLadderEvyatar.Repositories
 {
     public interface IPlayerRepository
     {
         // Get the player and a flag reporting if he is the best player in the scoreboard
-        Task<Tuple<Player, bool>> GetPlayer(string name);
-        Task<Tuple<Player, bool>> GetPlayer(int playerId);
+        Task<Tuple<GetPlayerDto, bool>> GetPlayer(string name);
+        Task<Tuple<GetPlayerDto, bool>> GetPlayer(int playerId);
+
+        // Assistant methods for debugging
+        Task<IEnumerable<GetPlayerDto>> GetAllPlayers();
+        Task<GetPlayerDto> GetBestPlayer();
 
         // Create a new player with a given name, and immediately start playing the game for him
-        Task<Player> CreatePlayer(string name);
-        // Assistant methods for debugging
-        Task<IEnumerable<Player>> GetAllPlayers();
-        Task<Player> GetBestPlayer();
+        Task<GetPlayerDto> CreatePlayer(CreatePlayerDto newPlayerDto);
+
+        // Delete an existing player
+        Task<bool> DeletePlayer(int playerId);
+        Task<bool> DeletePlayer(string playerName);
     }
 }

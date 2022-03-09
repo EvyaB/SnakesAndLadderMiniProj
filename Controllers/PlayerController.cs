@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using SnakesAndLadderEvyatar.Data;
+using SnakesAndLadderEvyatar.DTO.Player;
 
 namespace SnakesAndLadderEvyatar.Controllers
 {
@@ -23,7 +24,7 @@ namespace SnakesAndLadderEvyatar.Controllers
         [HttpGet("{name:alpha}")]
         public async Task<IActionResult> GetPlayerStatus(string name)
         {
-            Tuple<Player, bool> player = await _playerRepository.GetPlayer(name);
+            Tuple<GetPlayerDto, bool> player = await _playerRepository.GetPlayer(name);
             
             // Check if the player was found
             if (player.Item1 != null)
@@ -40,7 +41,7 @@ namespace SnakesAndLadderEvyatar.Controllers
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetPlayerStatus(int id)
         {
-            Tuple<Player, bool> player = await _playerRepository.GetPlayer(id);
+            Tuple<GetPlayerDto, bool> player = await _playerRepository.GetPlayer(id);
 
             // Check if the player was found
             if (player.Item1 != null)
@@ -55,21 +56,32 @@ namespace SnakesAndLadderEvyatar.Controllers
 
         // Start a game as a new player 
         [HttpPost]
-        public async Task<Player> CreateNewPlayer(string name)
+        public async Task<GetPlayerDto> CreateNewPlayer(CreatePlayerDto newPlayer)
         {
-            return await _playerRepository.CreatePlayer(name);
+            return await _playerRepository.CreatePlayer(newPlayer);
+        }
+
+        [HttpDelete("{playerId:int}")]
+        public async Task<bool> DeletePlayer(int playerId)
+        {
+            return await _playerRepository.DeletePlayer(playerId);
+        }
+        [HttpDelete("{playerName:alpha}")]
+        public async Task<bool> DeletePlayer(string playerName)
+        {
+            return await _playerRepository.DeletePlayer(playerName);
         }
 
         // Assistant method to check all the players
         [HttpGet("all")]
-        public async Task<IEnumerable<Player>> GetPlayerStatus()
+        public async Task<IEnumerable<GetPlayerDto>> GetPlayerStatus()
         {
             return await _playerRepository.GetAllPlayers();
         }
        
         // Assistant method to check for the best player (taken least turns to finish the game)
         [HttpGet("best")]
-        public async Task<Player> GetBestPlayer()
+        public async Task<GetPlayerDto> GetBestPlayer()
         {
             return await _playerRepository.GetBestPlayer();
         }

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using SnakesAndLadderEvyatar.DTO.Player;
 
 namespace SnakesAndLadderEvyatar.Repositories
 {
@@ -20,40 +21,69 @@ namespace SnakesAndLadderEvyatar.Repositories
             _dataContext = dataContext;
         }
 
-        public async Task<Player> CreatePlayer(string name)
+        public async Task<Tuple<GetPlayerDto, bool>> GetPlayer(string name)
+        {
+            Player playerData = await _dataContext.Players.Include(p => p.Games).FirstOrDefaultAsync(p => p.PlayerName == name);
+            return new Tuple<GetPlayerDto, bool>(new GetPlayerDto(playerData), await _scoreboardRepository.IsBestPlayer(playerData));
+        }
+
+        public async Task<Tuple<GetPlayerDto, bool>> GetPlayer(int playerId)
+        {
+            Player playerData = await _dataContext.Players.Include(p => p.Games).FirstOrDefaultAsync(p => p.Id == playerId);
+            return new Tuple<GetPlayerDto, bool>(new GetPlayerDto(playerData), await _scoreboardRepository.IsBestPlayer(playerData));
+        }
+
+        public async Task<IEnumerable<GetPlayerDto>> GetAllPlayers()
+        {
+            return await _dataContext.Players.Include(player => player.Games).Select(player => new GetPlayerDto(player)).ToListAsync();
+        }
+
+        public async Task<GetPlayerDto> GetBestPlayer()
+        {
+            return new GetPlayerDto(await _scoreboardRepository.GetBestPlayer());
+        }
+
+        public async Task<GetPlayerDto> CreatePlayer(CreatePlayerDto newPlayerDto)
         {
             Player newPlayer = new Player()
             {
-                PlayerName = name
+                PlayerName = newPlayerDto.Name
             };
 
             // Add the player to the list of players
             await _dataContext.Players.AddAsync(newPlayer);
             await _dataContext.SaveChangesAsync();
 
-            return newPlayer;
+            return new GetPlayerDto(newPlayer);
         }
 
-        public async Task<Tuple<Player, bool>> GetPlayer(string name)
+        public async Task<bool> DeletePlayer(int playerId)
         {
-            Player playerData = await _dataContext.Players.Include(p => p.Games).FirstOrDefaultAsync(p => p.PlayerName == name);
-            return new Tuple<Player, bool>(playerData, await _scoreboardRepository.IsBestPlayer(playerData));
-        }
+            bool result = false;
+            Player player = await _dataContext.Players.FindAsync(playerId);
 
-        public async Task<Tuple<Player, bool>> GetPlayer(int playerId)
-        {
-            Player playerData = await _dataContext.Players.Include(p => p.Games).FirstOrDefaultAsync(p => p.Id == playerId);
-            return new Tuple<Player, bool>(playerData, await _scoreboardRepository.IsBestPlayer(playerData));
-        }
+            if (player != null)
+            {
+                _dataContext.Players.Remove(player);
+                await _dataContext.SaveChangesAsync();
+                result = true;
+            }
 
-        public async Task<IEnumerable<Player>> GetAllPlayers()
-        {
-            return await _dataContext.Players.Include(player => player.Games).ToListAsync();
+            return result;
         }
-
-        public async Task<Player> GetBestPlayer()
+        public async Task<bool> DeletePlayer(string playerName)
         {
-            return await _scoreboardRepository.GetBestPlayer();
+            bool result = false;
+            Player player = await _dataContext.Players.Where(player => player.PlayerName == playerName).FirstOrDefaultAsync();
+
+            if (player != null)
+            {
+                _dataContext.Players.Remove(player);
+                await _dataContext.SaveChangesAsync();
+                result = true;
+            }
+
+            return result;
         }
     }
 }

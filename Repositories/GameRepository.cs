@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using SnakesAndLadderEvyatar.Data;
 using SnakesAndLadderEvyatar.DTO.Game;
+using SnakesAndLadderEvyatar.DTO.Player;
 
 namespace SnakesAndLadderEvyatar.Repositories
 {
@@ -52,7 +53,7 @@ namespace SnakesAndLadderEvyatar.Repositories
         public async Task<GetGameDto> CreateGame(AddGameDto gameDto)
         {
             var result = await _playerRepository.GetPlayer(gameDto.PlayerId);
-            Player player = result.Item1;
+            GetPlayerDto player = result.Item1;
 
             if (player == null)
             {
@@ -65,7 +66,6 @@ namespace SnakesAndLadderEvyatar.Repositories
                 {
                     CurrentGameState = Game.GameState.Playing,
                     PlayerId = gameDto.PlayerId,
-                    Player = player,
                     StartDateTime = DateTime.Now,
                     PlayerPosition = new Cell(0, 0),
                     TurnNumber = 0
