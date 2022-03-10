@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.EntityFrameworkCore;
 using Moq;
 using Moq.EntityFrameworkCore;
 using SnakesAndLadderEvyatar.DTO.Player;
@@ -15,8 +16,8 @@ namespace UnitTests
     {
         private readonly PlayerRepository _playerRepository;
 
-        private Mock<DataContext> _dataContextMock;
-        private IList<Player> _playerInfo;
+        private readonly Mock<DataContext> _dataContextMock;
+        private readonly IList<Player> _playerInfo;
 
         public PlayerRepositoryTestSuit()
         {
@@ -27,7 +28,7 @@ namespace UnitTests
                 new Player() {Id = 10, PlayerName = "Sagiv", Games = new List<Game>()}
             };
 
-            _dataContextMock = new Mock<DataContext>();
+            _dataContextMock = new Mock<DataContext>(new DbContextOptions<DataContext>());
             _dataContextMock.Setup(c => c.Players).ReturnsDbSet(_playerInfo);
             _playerRepository = new PlayerRepository(_dataContextMock.Object);
         }
@@ -55,6 +56,38 @@ namespace UnitTests
                 Assert.Equal(expectedPlayer.PlayerName, playerInfo.Name);
                 Assert.Equal(expectedPlayer.Games.Select(g => g.Id), playerInfo.Games.Select(g => g.Id));
             }
+        }
+
+        [Theory]
+        [InlineData("Shani", 0)]
+        [InlineData("Ron", 1)]
+        [InlineData("Sagiv", 2)]
+        [InlineData("Danny", null)]
+        public async void GetPlayerByStringTest(string playerName, int? indexInPlayerList)
+        {
+            var playerInfo = await _playerRepository.GetPlayer(playerName);
+            
+            if (indexInPlayerList == null)
+            {
+                // Expecting to not find anyone
+                Assert.Null(playerInfo);
+            }
+            else
+            {
+                // Expecting to find specific player
+                Player expectedPlayer = _playerInfo[indexInPlayerList.Value];
+                Assert.Equal(expectedPlayer.Id, playerInfo.Id);
+                Assert.Equal(expectedPlayer.PlayerName, playerInfo.Name);
+                Assert.Equal(expectedPlayer.Games.Select(g => g.Id), playerInfo.Games.Select(g => g.Id));
+            }
+        }
+
+        [Fact]
+        public async void GetAllPlayersTest()
+        {
+            var allPlayers = await _playerRepository.GetAllPlayers();
+            Assert.Equal(_playerInfo.Count, allPlayers.Count());
+            Assert.Equal(_playerInfo.Select(p => p.Id), allPlayers.Select(p => p.Id));
         }
     }
 }

@@ -36,7 +36,7 @@ namespace UnitTests
                 _bestGame
             };
 
-            _dataContextMock = new Mock<DataContext>();
+            _dataContextMock = new Mock<DataContext>(new DbContextOptions<DataContext>());
             _dataContextMock.Setup(c => c.Games).ReturnsDbSet(_gamesDb);
             _scoreboardRepository = new ScoreboardRepository(_dataContextMock.Object);
         }
