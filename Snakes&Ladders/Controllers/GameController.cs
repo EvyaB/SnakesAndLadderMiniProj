@@ -13,22 +13,26 @@ namespace SnakesAndLadderEvyatar.Controllers
     public class GameController : ControllerBase
     {
         private readonly Repositories.IGameRepository _gameRepository;
+        private readonly Repositories.IScoreboardRepository _scoreboardRepository;
 
-        public GameController(Repositories.IGameRepository gameRepository)
+        public GameController(Repositories.IGameRepository gameRepository, Repositories.IScoreboardRepository scoreboardRepository)
         {
             _gameRepository = gameRepository;
+            _scoreboardRepository = scoreboardRepository;
         }
 
         // Get the game and a flag reporting if this is the best game in the scoreboard
         [HttpGet("{gameId}")]
         public async Task<IActionResult> GetGameStatus(int gameId)
         {
-            Tuple<GetGameDto, bool> game = await _gameRepository.GetGame(gameId);
+            GetGameDto game = await _gameRepository.GetGame(gameId);
           
             // Check if the game was found
-            if (game.Item1 != null)
+            if (game != null)
             {
-                return Ok(game);
+                bool isBestGame = await _scoreboardRepository.IsBestGame(game.Id);
+                Tuple<GetGameDto, bool> result = new Tuple<GetGameDto, bool>(game, isBestGame);
+                return Ok(result);
             }
             else
             {
@@ -81,7 +85,7 @@ namespace SnakesAndLadderEvyatar.Controllers
         [HttpGet("best")]
         public async Task<GetGameDto> GetBestGame()
         {
-            return await _gameRepository.GetBestGame();
+            return await _scoreboardRepository.GetBestGame();
         }
     }
 }

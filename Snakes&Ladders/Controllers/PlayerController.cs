@@ -14,22 +14,26 @@ namespace SnakesAndLadderEvyatar.Controllers
     public class PlayerController : ControllerBase
     {
         private readonly Repositories.IPlayerRepository _playerRepository;
+        private readonly Repositories.IScoreboardRepository _scoreboardRepository;
 
-        public PlayerController(Repositories.IPlayerRepository playerRepository)
+        public PlayerController(Repositories.IPlayerRepository playerRepository, Repositories.IScoreboardRepository scoreboardRepository)
         {
             _playerRepository = playerRepository;
+            _scoreboardRepository = scoreboardRepository;
         }
 
         // Get the player and a flag reporting if he is the best player in the scoreboard
         [HttpGet("{name:alpha}")]
         public async Task<IActionResult> GetPlayerStatus(string name)
         {
-            Tuple<GetPlayerDto, bool> player = await _playerRepository.GetPlayer(name);
-            
+            GetPlayerDto player = await _playerRepository.GetPlayer(name);
+
             // Check if the player was found
-            if (player.Item1 != null)
+            if (player != null)
             {
-                return Ok(player);
+                bool isBestPlayer = await _scoreboardRepository.IsBestPlayer(player.Id);
+                Tuple<GetPlayerDto, bool> result = new Tuple<GetPlayerDto, bool>(player, isBestPlayer);
+                return Ok(result);
             }
             else
             {
@@ -41,12 +45,14 @@ namespace SnakesAndLadderEvyatar.Controllers
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetPlayerStatus(int id)
         {
-            Tuple<GetPlayerDto, bool> player = await _playerRepository.GetPlayer(id);
+            GetPlayerDto player = await _playerRepository.GetPlayer(id);
 
             // Check if the player was found
-            if (player.Item1 != null)
+            if (player != null)
             {
-                return Ok(player);
+                bool isBestPlayer = await _scoreboardRepository.IsBestPlayer(player.Id);
+                Tuple<GetPlayerDto, bool> result = new Tuple<GetPlayerDto, bool>(player, isBestPlayer);
+                return Ok(result);
             }
             else
             {
@@ -83,7 +89,7 @@ namespace SnakesAndLadderEvyatar.Controllers
         [HttpGet("best")]
         public async Task<GetPlayerDto> GetBestPlayer()
         {
-            return await _playerRepository.GetBestPlayer();
+            return await _scoreboardRepository.GetBestPlayer();
         }
     }
 }

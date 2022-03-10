@@ -22,10 +22,10 @@ namespace SnakesAndLadderEvyatar.Repositories
             _playerRepository = playerRepository;
         }
 
-        public async Task<Tuple<GetGameDto, bool>> GetGame(int gameId)
+        public async Task<GetGameDto> GetGame(int gameId)
         {
             Game game = await _dataContext.Games.Include(game => game.Player).FirstOrDefaultAsync(game => game.Id == gameId);
-            return new Tuple<GetGameDto, bool>(new GetGameDto(game), await _scoreboardRepository.IsBestGame(game));
+            return game != null ? new GetGameDto(game) : null;
         }
 
         public async Task<List<GetGameDto>> GetAllActiveGames()
@@ -44,16 +44,9 @@ namespace SnakesAndLadderEvyatar.Repositories
             return await _dataContext.Games.Include(game => game.Player).Where(game => game.PlayerId == playerId).Select(game => new GetGameDto(game)).ToListAsync();
         }
 
-        public async Task<GetGameDto> GetBestGame()
-        {
-            Game bestGame = await _scoreboardRepository.GetBestGame();
-            return new GetGameDto(bestGame);
-        }
-
         public async Task<GetGameDto> CreateGame(AddGameDto gameDto)
         {
-            var result = await _playerRepository.GetPlayer(gameDto.PlayerId);
-            GetPlayerDto player = result.Item1;
+            GetPlayerDto player = await _playerRepository.GetPlayer(gameDto.PlayerId);
 
             if (player == null)
             {

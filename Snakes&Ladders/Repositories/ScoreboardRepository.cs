@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using SnakesAndLadderEvyatar.DTO.Game;
+using SnakesAndLadderEvyatar.DTO.Player;
 using SnakesAndLadderEvyatar.Models;
 
 namespace SnakesAndLadderEvyatar.Repositories
@@ -17,16 +19,16 @@ namespace SnakesAndLadderEvyatar.Repositories
             _dataContext = dataContext;
         }
 
-        public async Task<Player> GetBestPlayer()
-        {
-            Game bestGame = await GetBestGame();
-            return bestGame?.Player;
-        }
-
-        public async Task<Game> GetBestGame()
+        public async Task<GetPlayerDto> GetBestPlayer()
         {
             return await _dataContext.Games.Where(game => game.CurrentGameState == Game.GameState.Finished)
-                .OrderBy(player => player.TurnNumber).Include(game => game.Player).FirstOrDefaultAsync();
+                .OrderBy(player => player.TurnNumber).Include(game => game.Player.Games).Select(game => new GetPlayerDto(game.Player)).FirstOrDefaultAsync();
+        }
+
+        public async Task<GetGameDto> GetBestGame()
+        {
+            return await _dataContext.Games.Where(game => game.CurrentGameState == Game.GameState.Finished)
+                .OrderBy(player => player.TurnNumber).Include(game => game.Player).Select(game => new GetGameDto(game)).FirstOrDefaultAsync();
         }
 
         public async Task<bool> IsBestGame(Game game)
@@ -36,7 +38,7 @@ namespace SnakesAndLadderEvyatar.Repositories
 
         public async Task<bool> IsBestGame(int gameId)
         {
-            Game bestGame = await GetBestGame();
+            GetGameDto bestGame = await GetBestGame();
             return (bestGame != null && bestGame.Id == gameId);
         }
 
@@ -47,7 +49,7 @@ namespace SnakesAndLadderEvyatar.Repositories
 
         public async Task<bool> IsBestPlayer(int playerId)
         {
-            Player bestPlayer = await GetBestPlayer();
+            GetPlayerDto bestPlayer = await GetBestPlayer();
             return (bestPlayer != null && bestPlayer.Id == playerId);
         }
     }

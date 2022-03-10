@@ -8,6 +8,8 @@ namespace SnakesAndLadderEvyatar.Repositories
         public virtual DbSet<Player> Players { get; set; }
         public virtual DbSet<Game> Games { get; set; }
 
+        public DataContext(DbContextOptions options) : base(options) { }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Game>().OwnsOne(game => game.PlayerPosition);

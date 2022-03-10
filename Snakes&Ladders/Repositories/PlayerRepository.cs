@@ -12,37 +12,30 @@ namespace SnakesAndLadderEvyatar.Repositories
 {
     public class PlayerRepository : IPlayerRepository
     {
-        private readonly IScoreboardRepository _scoreboardRepository;
         private readonly DataContext _dataContext;
 
-        public PlayerRepository(IScoreboardRepository scoreboardRepository, DataContext dataContext)
+        public PlayerRepository(DataContext dataContext)
         {
-            _scoreboardRepository = scoreboardRepository;
             _dataContext = dataContext;
         }
 
-        public async Task<Tuple<GetPlayerDto, bool>> GetPlayer(string name)
+        public async Task<GetPlayerDto> GetPlayer(string name)
         {
             Player playerData = await _dataContext.Players.Include(p => p.Games).FirstOrDefaultAsync(p => p.PlayerName == name);
-            return new Tuple<GetPlayerDto, bool>(new GetPlayerDto(playerData), await _scoreboardRepository.IsBestPlayer(playerData));
+            return playerData != null ? new GetPlayerDto(playerData) : null;
         }
 
-        public async Task<Tuple<GetPlayerDto, bool>> GetPlayer(int playerId)
+        public async Task<GetPlayerDto> GetPlayer(int playerId)
         {
             Player playerData = await _dataContext.Players.Include(p => p.Games).FirstOrDefaultAsync(p => p.Id == playerId);
-            return new Tuple<GetPlayerDto, bool>(new GetPlayerDto(playerData), await _scoreboardRepository.IsBestPlayer(playerData));
+            return playerData != null ? new GetPlayerDto(playerData) : null; 
         }
 
         public async Task<IEnumerable<GetPlayerDto>> GetAllPlayers()
         {
             return await _dataContext.Players.Include(player => player.Games).Select(player => new GetPlayerDto(player)).ToListAsync();
         }
-
-        public async Task<GetPlayerDto> GetBestPlayer()
-        {
-            return new GetPlayerDto(await _scoreboardRepository.GetBestPlayer());
-        }
-
+        
         public async Task<GetPlayerDto> CreatePlayer(CreatePlayerDto newPlayerDto)
         {
             Player newPlayer = new Player()

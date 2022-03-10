@@ -17,22 +17,25 @@ namespace UnitTests
         private IList<Game> _gamesDb;
 
         private Player _bestPlayer;
+        private Player _otherPlayer;
         private Game _bestGame;
 
         public ScoreboardRepositoryTestSuit()
         {
-            _bestPlayer = new Player() { Id = 1, PlayerName = "Danny" };
+            _bestPlayer = new Player() { Id = 1, PlayerName = "Meir", Games = new List<Game>()};
+
             _bestGame = new Game() { Id = 4, TurnNumber = 5, Player = _bestPlayer, CurrentGameState = Game.GameState.Finished };
+            _bestPlayer.Games.Add(_bestGame);
 
             _gamesDb = new List<Game>
             {
-                new Game() {Id = 1, TurnNumber = 15, CurrentGameState = Game.GameState.Finished, PlayerId = 4},
-                new Game() {Id = 2, TurnNumber = 10, CurrentGameState = Game.GameState.Finished, PlayerId = 6},
-                new Game() {Id = 3, TurnNumber = 12, CurrentGameState = Game.GameState.Finished, PlayerId = 6},
-                new Game() {Id = 5, TurnNumber = 3, CurrentGameState = Game.GameState.Playing, PlayerId = 2},
+                new Game() {Id = 1, TurnNumber = 15, CurrentGameState = Game.GameState.Finished, PlayerId = 4, Player = new Player() {Id=2, PlayerName = "Danny"}},
+                new Game() {Id = 2, TurnNumber = 10, CurrentGameState = Game.GameState.Finished, PlayerId = 6, Player = new Player() {Id=2, PlayerName = "Don"}},
+                new Game() {Id = 3, TurnNumber = 12, CurrentGameState = Game.GameState.Finished, PlayerId = 6, Player = new Player() {Id=2, PlayerName = "Dor"}},
+                new Game() {Id = 5, TurnNumber = 3, CurrentGameState = Game.GameState.Playing, PlayerId = 2, Player = new Player() {Id=2, PlayerName = "Danny"}},
                 _bestGame
             };
-            
+
             _dataContextMock = new Mock<DataContext>();
             _dataContextMock.Setup(c => c.Games).ReturnsDbSet(_gamesDb);
             _scoreboardRepository = new ScoreboardRepository(_dataContextMock.Object);
@@ -43,7 +46,13 @@ namespace UnitTests
         {
             var bestGame = await _scoreboardRepository.GetBestGame();
             Assert.NotNull(bestGame);
-            Assert.Equal(bestGame, _bestGame);
+            Assert.Equal(_bestGame.Id, bestGame.Id);
+            Assert.Equal(_bestGame.TurnNumber, bestGame.TurnNumber);
+            Assert.Equal(_bestGame.CurrentGameState, bestGame.GameState);
+            Assert.Equal(_bestGame.Player.PlayerName, bestGame.PlayerName);
+            Assert.Equal(_bestGame.PlayerPosition, bestGame.PlayerPosition);
+            Assert.Equal(_bestGame.StartDateTime, bestGame.StartDateTime);
+            Assert.Equal(_bestGame.EndDateTime, bestGame.EndDateTime);
         }
         
         [Fact]
@@ -51,7 +60,9 @@ namespace UnitTests
         {
             var bestPlayer = await _scoreboardRepository.GetBestPlayer();
             Assert.NotNull(bestPlayer);
-            Assert.Equal(bestPlayer, _bestPlayer);
+            Assert.Equal(_bestPlayer.Id, _bestPlayer.Id);
+            Assert.Equal(_bestPlayer.PlayerName, _bestPlayer.PlayerName);
+            Assert.Contains(_bestGame.Id, bestPlayer.Games.Select(game => game.Id));
         }
 
         [Fact]
