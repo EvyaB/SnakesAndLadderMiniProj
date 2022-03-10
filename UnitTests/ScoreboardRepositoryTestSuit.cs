@@ -29,10 +29,10 @@ namespace UnitTests
 
             _gamesDb = new List<Game>
             {
-                new Game() {Id = 1, TurnNumber = 15, CurrentGameState = Game.GameState.Finished, PlayerId = 4, Player = new Player() {Id=2, PlayerName = "Danny"}},
-                new Game() {Id = 2, TurnNumber = 10, CurrentGameState = Game.GameState.Finished, PlayerId = 6, Player = new Player() {Id=2, PlayerName = "Don"}},
-                new Game() {Id = 3, TurnNumber = 12, CurrentGameState = Game.GameState.Finished, PlayerId = 6, Player = new Player() {Id=2, PlayerName = "Dor"}},
-                new Game() {Id = 5, TurnNumber = 3, CurrentGameState = Game.GameState.Playing, PlayerId = 2, Player = new Player() {Id=2, PlayerName = "Danny"}},
+                new Game() {Id = 1, TurnNumber = 15, CurrentGameState = Game.GameState.Finished, PlayerId = 4, Player = new Player() {Id=4, PlayerName = "Adi"}},
+                new Game() {Id = 2, TurnNumber = 10, CurrentGameState = Game.GameState.Finished, PlayerId = 6, Player = new Player() {Id=6, PlayerName = "Don"}},
+                new Game() {Id = 3, TurnNumber = 12, CurrentGameState = Game.GameState.Finished, PlayerId = 6, Player = new Player() {Id=6, PlayerName = "Don"}},
+                new Game() {Id = 5, TurnNumber = 3, CurrentGameState = Game.GameState.Playing, PlayerId = 2, Player = new Player() {Id=2, PlayerName = "Ray"}},
                 _bestGame
             };
 
