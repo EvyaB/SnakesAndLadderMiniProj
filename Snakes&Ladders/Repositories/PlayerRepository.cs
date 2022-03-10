@@ -53,6 +53,8 @@ namespace SnakesAndLadderEvyatar.Repositories
         public async Task<bool> DeletePlayer(int playerId)
         {
             bool result = false;
+            var test1 = _dataContext.Players;
+            var test = test1.Find(playerId);
             Player player = await _dataContext.Players.FindAsync(playerId);
 
             if (player != null)

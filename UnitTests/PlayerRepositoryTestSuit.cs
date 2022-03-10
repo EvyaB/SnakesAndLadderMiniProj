@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using Moq.EntityFrameworkCore;
@@ -88,6 +89,51 @@ namespace UnitTests
             var allPlayers = await _playerRepository.GetAllPlayers();
             Assert.Equal(_playerInfo.Count, allPlayers.Count());
             Assert.Equal(_playerInfo.Select(p => p.Id), allPlayers.Select(p => p.Id));
+        }
+
+        [Fact]
+        public async void CreatePlayerTest()
+        {
+            CreatePlayerDto newPlayer = new CreatePlayerDto() {Name = "Aviv"};
+
+            var result = await _playerRepository.CreatePlayer(newPlayer);
+
+            _dataContextMock.Verify(x => x.Players.AddAsync(It.Is<Player>(p => p.PlayerName == "Aviv"), It.IsAny<CancellationToken>()), Times.Once);
+            _dataContextMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+            Assert.NotNull(result);
+        }
+
+        [Theory]
+        [InlineData(0)]
+        [InlineData(1)]
+        [InlineData(2)]
+        public async void DeletePlayerByIdSuccessTest(int playerIndex)
+        {
+            int playerId = _playerInfo[playerIndex].Id;
+
+            // The find method has to be mocked anyway despite _dataContextMock.Players already returning the valid local list of players. Not sure why.
+            _dataContextMock.Setup(x => x.Players.FindAsync(playerId)).ReturnsAsync(_playerInfo[playerIndex]);
+
+            var result = await _playerRepository.DeletePlayer(playerId);
+
+            _dataContextMock.Verify(x => x.Players.Remove(_playerInfo[playerIndex]), Times.Once);
+            _dataContextMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+            Assert.True(result);
+        }
+
+        [Theory]
+        [InlineData(0)]
+        [InlineData(1)]
+        [InlineData(2)]
+        public async void DeletePlayerByStringSuccessTest(int playerIndex)
+        {
+            string playerName = _playerInfo[playerIndex].PlayerName;
+
+            var result = await _playerRepository.DeletePlayer(playerName);
+
+            _dataContextMock.Verify(x => x.Players.Remove(_playerInfo[playerIndex]), Times.Once);
+            _dataContextMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+            Assert.True(result);
         }
     }
 }
