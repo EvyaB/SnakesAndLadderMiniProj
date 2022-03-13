@@ -73,10 +73,14 @@ namespace SnakesAndLadderEvyatar.Repositories
 
         public async Task<bool> DeleteGame(int gameId)
         {
-            bool result = false;
             Game game = await _dataContext.Games.FindAsync(gameId);
+            return await DeleteGame(game);
+        }
+        public async Task<bool> DeleteGame(Game game)
+        {
+            bool result = false;
 
-            if (game != null)
+            if (game != null && _dataContext.Games.Contains(game))
             {
                 _dataContext.Games.Remove(game);
                 await _dataContext.SaveChangesAsync();
@@ -84,11 +88,6 @@ namespace SnakesAndLadderEvyatar.Repositories
             }
 
             return result;
-        }
-        public async Task<bool> DeleteGame(Game game)
-        {
-            if (game == null) return false;
-            return await DeleteGame(game.Id);
         }
 
         public async Task<GetGameDto> EditGame(EditGameDto editedGame)
@@ -103,7 +102,6 @@ namespace SnakesAndLadderEvyatar.Repositories
             }
             else
             {
-                originalGame.PlayerId = (editedGame.PlayerId ?? originalGame.PlayerId);
                 originalGame.TurnNumber = (editedGame.TurnNumber ?? originalGame.TurnNumber);
                 originalGame.PlayerPosition = (editedGame.PlayerPosition ?? originalGame.PlayerPosition);
                 originalGame.CurrentGameState = (editedGame.CurrentGameState ?? originalGame.CurrentGameState);
