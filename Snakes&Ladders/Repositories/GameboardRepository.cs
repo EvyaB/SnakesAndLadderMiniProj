@@ -14,7 +14,15 @@ namespace SnakesAndLadderEvyatar.Repositories
 
         public Cell GetFinalCell()
         {
-            return new Cell(_gameBoard.BoardSize);
+            if (_gameBoard.BoardSize.Item1 % 2 == 0)
+            {
+                return new Cell(_gameBoard.BoardSize);
+            }
+            else
+            {
+                // If the board size is odd, game ends at the left side of the board
+                return new Cell(_gameBoard.BoardSize.Item1, 0); 
+            }
         }
 
         public int GetBoardRowsCount()

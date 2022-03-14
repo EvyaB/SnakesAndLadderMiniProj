@@ -37,8 +37,18 @@ namespace UnitTests
             Cell finalCell = _gameboardRepository.GetFinalCell();
             int rowsCount = _gameboardRepository.GetBoardRowsCount();
             int columnsCount = _gameboardRepository.GetBoardColumnsCount();
+
             Assert.Equal(rowsCount, finalCell.Row);
-            Assert.Equal(columnsCount, finalCell.Column);
+
+            // Final Cell's column depends on if the board has an Even or Odd number of rows.
+            if (rowsCount % 2 == 0)
+            {
+                Assert.Equal(columnsCount, finalCell.Column);
+            }
+            else
+            {
+                Assert.Equal(0, finalCell.Column);
+            }
         }
 
         [Theory]

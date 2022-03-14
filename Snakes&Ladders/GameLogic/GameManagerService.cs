@@ -15,11 +15,13 @@ namespace SnakesAndLadderEvyatar.GameLogic
         private static int TURNS_TIMER_MILLISECONDS = 3000;
         private readonly Repositories.IGameboardRepository _gameboardRepository;
         private readonly IServiceScopeFactory _scopeFactory;
+        private readonly IDice _dices;
 
-        public GameManagerService(Repositories.IGameboardRepository gameboardRepository, IServiceScopeFactory scopeFactory)
+        public GameManagerService(Repositories.IGameboardRepository gameboardRepository, IServiceScopeFactory scopeFactory, IDice dices = null)
         {
             _gameboardRepository = gameboardRepository;
             _scopeFactory = scopeFactory;
+            _dices = dices ?? new Dice();
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -47,7 +49,7 @@ namespace SnakesAndLadderEvyatar.GameLogic
             }
         }
 
-        private void PlayTurnInGame(Game game)
+        public void PlayTurnInGame(Game game)
         {
             // Update player's turn counter
             game.TurnNumber++;
@@ -73,8 +75,7 @@ namespace SnakesAndLadderEvyatar.GameLogic
         private void MovePlayerPerDiceRoll(Game game)
         {
             // Roll a dice 
-            Random random = new Random();
-            int steps = random.Next(1, 6);
+            int steps = _dices.DiceRoll();
 
             // Determine movement direction according to current row (moving to the right on Even rows and to the left on Odd rows)
             if (game.PlayerPosition.Row % 2 == 0)
@@ -108,7 +109,6 @@ namespace SnakesAndLadderEvyatar.GameLogic
                 }
             }
         }
-
         private void MovePlayerPerCellEffect(Game game)
         {
             // Check if there is any modifier at player location

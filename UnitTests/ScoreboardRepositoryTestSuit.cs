@@ -100,8 +100,7 @@ namespace UnitTests
         {
             Assert.Equal(result, await _scoreboardRepository.IsBestPlayer(playerId));
         }
-
-
+        
         [Fact]
         public async void IsBestGameTest()
         {
