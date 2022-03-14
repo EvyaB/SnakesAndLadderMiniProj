@@ -19,5 +19,6 @@ namespace SnakesAndLadderEvyatar.Models
         public GameState CurrentGameState { get; set; }
         public DateTime StartDateTime { get; set; }
         public DateTime EndDateTime { get; set; }
+        public TimeSpan GameDuration { get; set; }
     }
 }

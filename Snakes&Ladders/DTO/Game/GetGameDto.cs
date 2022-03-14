@@ -12,6 +12,7 @@ namespace SnakesAndLadderEvyatar.DTO.Game
         public Cell PlayerPosition { get; set; }
         public DateTime StartDateTime { get; set; }
         public DateTime EndDateTime { get; set; }
+        public TimeSpan Duration { get; set; }
 
         public GetGameDto(Models.Game game)
         {
@@ -22,6 +23,7 @@ namespace SnakesAndLadderEvyatar.DTO.Game
             PlayerPosition = game.PlayerPosition;
             StartDateTime = game.StartDateTime;
             EndDateTime = game.EndDateTime;
+            Duration = game.GameDuration;
         }
     }
 }

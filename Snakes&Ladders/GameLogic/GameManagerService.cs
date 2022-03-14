@@ -53,6 +53,7 @@ namespace SnakesAndLadderEvyatar.GameLogic
         {
             // Update player's turn counter
             game.TurnNumber++;
+            game.GameDuration += TimeSpan.FromMilliseconds(TURNS_TIMER_MILLISECONDS);
 
             MovePlayerInGame(game);
 

@@ -61,7 +61,8 @@ namespace SnakesAndLadderEvyatar.Repositories
                     PlayerId = gameDto.PlayerId,
                     StartDateTime = DateTime.Now,
                     PlayerPosition = new Cell(0, 0),
-                    TurnNumber = 0
+                    TurnNumber = 0,
+                    GameDuration = TimeSpan.Zero
                 };
 
                 await _dataContext.AddAsync(newGame);
