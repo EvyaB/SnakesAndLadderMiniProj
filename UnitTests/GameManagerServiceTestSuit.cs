@@ -54,12 +54,14 @@ namespace UnitTests
         {
             // Setup
             int initialTurnNum = 1;
+            TimeSpan initialDuration = TimeSpan.Zero;
             int playerRow = 0;
             _diceMock.Setup(d => d.DiceRoll()).Returns(diceRoll);
             Game gameToTest = new Game()
             {
                 CurrentGameState = Game.GameState.Playing, 
                 TurnNumber = initialTurnNum,
+                GameDuration = initialDuration,
                 PlayerPosition = new Cell(playerRow, initialColumn)
             };
 
@@ -68,6 +70,7 @@ namespace UnitTests
 
             // Verify
             Assert.Equal(initialTurnNum + 1, gameToTest.TurnNumber);
+            Assert.True(initialDuration < gameToTest.GameDuration);
             Assert.Equal(Game.GameState.Playing, gameToTest.CurrentGameState);
             Assert.Equal(expectedColumn, gameToTest.PlayerPosition.Column);
             Assert.Equal(playerRow, gameToTest.PlayerPosition.Row);
@@ -81,12 +84,14 @@ namespace UnitTests
         {
             // Setup
             int initialTurnNum = 1;
+            TimeSpan initialDuration = TimeSpan.Zero;
             int playerRow = 1;
             _diceMock.Setup(d => d.DiceRoll()).Returns(diceRoll);
             Game gameToTest = new Game()
             {
                 CurrentGameState = Game.GameState.Playing,
                 TurnNumber = initialTurnNum,
+                GameDuration = initialDuration,
                 PlayerPosition = new Cell(playerRow, initialColumn)
             };
 
@@ -95,6 +100,7 @@ namespace UnitTests
 
             // Verify
             Assert.Equal(initialTurnNum + 1, gameToTest.TurnNumber);
+            Assert.True(initialDuration < gameToTest.GameDuration);
             Assert.Equal(Game.GameState.Playing, gameToTest.CurrentGameState);
             Assert.Equal(expectedColumn, gameToTest.PlayerPosition.Column);
             Assert.Equal(playerRow, gameToTest.PlayerPosition.Row);
