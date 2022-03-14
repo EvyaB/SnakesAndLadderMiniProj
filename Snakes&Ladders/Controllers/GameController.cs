@@ -87,5 +87,12 @@ namespace SnakesAndLadderEvyatar.Controllers
         {
             return await _scoreboardRepository.GetBestGame();
         }
+        
+        // Assistant method to check for the best game (taken least turns to finish the game)
+        [HttpGet("best{playerId:int}")]
+        public async Task<GetGameDto> GetBestGameByPlayer(int playerId)
+        {
+            return await _scoreboardRepository.GetBestGame(playerId);
+        }
     }
 }

@@ -19,18 +19,27 @@ namespace UnitTests
         private Player _bestPlayer;
         private Player _otherPlayer;
         private Game _bestGame;
+        private Game _donBestGame;
 
         public ScoreboardRepositoryTestSuit()
         {
             _bestPlayer = new Player() { Id = 1, PlayerName = "Meir", Games = new List<Game>()};
-
             _bestGame = new Game() { Id = 4, TurnNumber = 5, Player = _bestPlayer, CurrentGameState = Game.GameState.Finished };
             _bestPlayer.Games.Add(_bestGame);
+
+            _donBestGame = new Game()
+            {
+                Id = 2,
+                TurnNumber = 10,
+                CurrentGameState = Game.GameState.Finished,
+                PlayerId = 6,
+                Player = new Player() { Id = 6, PlayerName = "Don" }
+            };
 
             _gamesDb = new List<Game>
             {
                 new Game() {Id = 1, TurnNumber = 15, CurrentGameState = Game.GameState.Finished, PlayerId = 4, Player = new Player() {Id=4, PlayerName = "Adi"}},
-                new Game() {Id = 2, TurnNumber = 10, CurrentGameState = Game.GameState.Finished, PlayerId = 6, Player = new Player() {Id=6, PlayerName = "Don"}},
+                _donBestGame,
                 new Game() {Id = 3, TurnNumber = 12, CurrentGameState = Game.GameState.Finished, PlayerId = 6, Player = new Player() {Id=6, PlayerName = "Don"}},
                 new Game() {Id = 5, TurnNumber = 3, CurrentGameState = Game.GameState.Playing, PlayerId = 2, Player = new Player() {Id=2, PlayerName = "Ray"}},
                 _bestGame
@@ -54,7 +63,21 @@ namespace UnitTests
             Assert.Equal(_bestGame.StartDateTime, bestGame.StartDateTime);
             Assert.Equal(_bestGame.EndDateTime, bestGame.EndDateTime);
         }
-        
+
+        [Fact]
+        public async void GetBestGameByPlayerTest()
+        {
+            var bestGame = await _scoreboardRepository.GetBestGame(_donBestGame.PlayerId);
+            Assert.NotNull(bestGame);
+            Assert.Equal(_donBestGame.Id, bestGame.Id);
+            Assert.Equal(_donBestGame.TurnNumber, bestGame.TurnNumber);
+            Assert.Equal(_donBestGame.CurrentGameState, bestGame.GameState);
+            Assert.Equal(_donBestGame.Player.PlayerName, bestGame.PlayerName);
+            Assert.Equal(_donBestGame.PlayerPosition, bestGame.PlayerPosition);
+            Assert.Equal(_donBestGame.StartDateTime, bestGame.StartDateTime);
+            Assert.Equal(_donBestGame.EndDateTime, bestGame.EndDateTime);
+        }
+
         [Fact]
         public async void GetBestPlayerTest()
         {

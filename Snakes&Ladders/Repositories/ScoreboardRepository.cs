@@ -31,6 +31,12 @@ namespace SnakesAndLadderEvyatar.Repositories
                 .OrderBy(player => player.TurnNumber).Include(game => game.Player).Select(game => new GetGameDto(game)).FirstOrDefaultAsync();
         }
 
+        public async Task<GetGameDto> GetBestGame(int playerId)
+        {
+            return await _dataContext.Games.Where(game => game.CurrentGameState == Game.GameState.Finished && game.PlayerId == playerId)
+                .OrderBy(player => player.TurnNumber).Include(game => game.Player).Select(game => new GetGameDto(game)).FirstOrDefaultAsync();
+        }
+
         public async Task<bool> IsBestGame(Game game)
         {
             return (game != null && await IsBestGame(game.Id));

@@ -13,6 +13,7 @@ namespace SnakesAndLadderEvyatar.Repositories
     {
         public Task<GetPlayerDto> GetBestPlayer();
         public Task<GetGameDto> GetBestGame();
+        public Task<GetGameDto> GetBestGame(int playerId);
         public Task<bool> IsBestGame(Game game);
         public Task<bool> IsBestGame(int gameId);
         public Task<bool> IsBestPlayer(Player player);
