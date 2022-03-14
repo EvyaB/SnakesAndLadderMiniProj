@@ -4,29 +4,22 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace SnakesAndLadderEvyatar.Migrations
 {
-    public partial class gamesTable : Migration
+    public partial class explicitForeignKey : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "CurrentCell_Column",
-                table: "Players");
-
-            migrationBuilder.DropColumn(
-                name: "CurrentCell_Row",
-                table: "Players");
-
-            migrationBuilder.DropColumn(
-                name: "GameStartDateTime",
-                table: "Players");
-
-            migrationBuilder.DropColumn(
-                name: "PlayerGameState",
-                table: "Players");
-
-            migrationBuilder.DropColumn(
-                name: "TurnNumber",
-                table: "Players");
+            migrationBuilder.CreateTable(
+                name: "Players",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    PlayerName = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Players", x => x.Id);
+                });
 
             migrationBuilder.CreateTable(
                 name: "Games",
@@ -69,38 +62,8 @@ namespace SnakesAndLadderEvyatar.Migrations
             migrationBuilder.DropTable(
                 name: "Games");
 
-            migrationBuilder.AddColumn<int>(
-                name: "CurrentCell_Column",
-                table: "Players",
-                type: "int",
-                nullable: true);
-
-            migrationBuilder.AddColumn<int>(
-                name: "CurrentCell_Row",
-                table: "Players",
-                type: "int",
-                nullable: true);
-
-            migrationBuilder.AddColumn<DateTime>(
-                name: "GameStartDateTime",
-                table: "Players",
-                type: "datetime(6)",
-                nullable: false,
-                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
-
-            migrationBuilder.AddColumn<int>(
-                name: "PlayerGameState",
-                table: "Players",
-                type: "int",
-                nullable: false,
-                defaultValue: 0);
-
-            migrationBuilder.AddColumn<int>(
-                name: "TurnNumber",
-                table: "Players",
-                type: "int",
-                nullable: false,
-                defaultValue: 0);
+            migrationBuilder.DropTable(
+                name: "Players");
         }
     }
 }

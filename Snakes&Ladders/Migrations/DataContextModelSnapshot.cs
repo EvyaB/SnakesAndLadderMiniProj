@@ -17,7 +17,7 @@ namespace SnakesAndLadderEvyatar.Migrations
                 .HasAnnotation("ProductVersion", "3.1.22")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            modelBuilder.Entity("SnakesAndLadderEvyatar.Data.Game", b =>
+            modelBuilder.Entity("SnakesAndLadderEvyatar.Models.Game", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -47,7 +47,7 @@ namespace SnakesAndLadderEvyatar.Migrations
                     b.ToTable("Games");
                 });
 
-            modelBuilder.Entity("SnakesAndLadderEvyatar.Data.Player", b =>
+            modelBuilder.Entity("SnakesAndLadderEvyatar.Models.Player", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -61,15 +61,15 @@ namespace SnakesAndLadderEvyatar.Migrations
                     b.ToTable("Players");
                 });
 
-            modelBuilder.Entity("SnakesAndLadderEvyatar.Data.Game", b =>
+            modelBuilder.Entity("SnakesAndLadderEvyatar.Models.Game", b =>
                 {
-                    b.HasOne("SnakesAndLadderEvyatar.Data.Player", "Player")
+                    b.HasOne("SnakesAndLadderEvyatar.Models.Player", "Player")
                         .WithMany("Games")
                         .HasForeignKey("PlayerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsOne("SnakesAndLadderEvyatar.Data.Cell", "PlayerPosition", b1 =>
+                    b.OwnsOne("SnakesAndLadderEvyatar.Models.Cell", "PlayerPosition", b1 =>
                         {
                             b1.Property<int>("GameId")
                                 .HasColumnType("int");

@@ -14,6 +14,7 @@ namespace SnakesAndLadderEvyatar.Repositories
         {
             modelBuilder.Entity<Game>().OwnsOne(game => game.PlayerPosition);
             modelBuilder.Entity<Game>().HasIndex(game => new {game.CurrentGameState, game.TurnNumber}); // filtering by gamestate, then by turn number
+            modelBuilder.Entity<Player>().HasMany(p => p.Games).WithOne(g => g.Player);
         }
     }
 }
